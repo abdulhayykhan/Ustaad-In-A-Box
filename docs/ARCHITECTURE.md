@@ -87,6 +87,12 @@ The engine guarantees **100% deterministic reproducibility**. Given identical in
    - **Severity Ordering:** For non-safety stops, rules are resolved by severity (`caution` > `normal`).
    - **Zero Match:** If no rule conditions are satisfied, the engine refuses to hallucinate and issues `ESCALATE` with `OUT_OF_RULES`.
 
+5. **Stage 5: Optional Conversational Phrasing Layer (`llm.py`)**
+   - **Architectural Boundary:** *"Rules decide the verdict; LLM only phrases."* The LLM has zero authority to classify symptoms, choose rules, or alter safety verdicts.
+   - **Engine:** Groq High-Speed Cloud API (`qwen/qwen3.8-27b` or `openai/gpt-oss-120b`).
+   - **Constrained Persona:** The system prompt passes the canonical verdict, rule ID, and baseline text, directing the model to vocalize in authentic Karachi Roman Urdu / English without diluting hazards.
+   - **Air-Gapped Resiliency:** If Groq is unreachable, offline, or disabled via the UI toggle, the system seamlessly serves the deterministic rule text in 0 ms.
+
 ---
 
 ## 3. Offline Speech-to-Text Pipeline

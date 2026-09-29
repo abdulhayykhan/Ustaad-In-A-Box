@@ -91,13 +91,16 @@ Most hackathon teams attempt to build a generic teacher, doctor, or pharmacist c
 ```
 Ustaad-In-A-Box/
 ├── engine.py              # Core deterministic rule engine & tag extractor
+├── llm.py                 # Groq LLM natural phrasing & cloud Whisper layer
 ├── rules.yaml             # Authored rule definitions with source provenance
 ├── synonyms.yaml          # Multi-lingual dictionary (Urdu / Roman Urdu / English)
 ├── logger.py              # JSONL interaction logger & CSV review sheet exporter
 ├── main.py                # FastAPI backend & audio transcription endpoint
-├── test_engine.py         # Automated test suite (56/56 passing)
+├── test_engine.py         # Automated rule test suite (56/56 passing)
+├── test_llm.py            # Automated Groq LLM integration & safety tests
 ├── requirements.txt       # Python dependencies (all free & open-source)
 ├── run.bat                # Windows 1-click startup batch script
+├── .env.example           # Environment template for Groq API key
 │
 ├── static/
 │   └── index.html         # Responsive frontend: PTT mic, waveform, why-panel, TTS
@@ -217,6 +220,48 @@ Input Text
   │      └── Return Rule's Verdict & Captured Phrasing
   └── 4. No Rules Matched ──────────────────────────────────────► ESCALATE (OUT_OF_RULES)
 ```
+
+---
+
+## ⚡ Dual-Engine Architecture: Groq LLM + Deterministic Rules
+
+Ustaad-in-a-Box upgrades the stand-in experience with an external **Groq Cloud LLM layer** (`llm.py`) while strictly preserving the core competition rule:
+
+> **"Rules decide the verdict; the LLM only phrases."**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. Deterministic Rule Engine (engine.py)                   │
+│    - Evaluates symptom tags & safety precedence            │
+│    - Computes: Verdict (SAFE / CAUTION / ESCALATE)          │
+│    - Selects Rule ID & Baseline Canonical Advice           │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ (Rigid Verdict & Rule Constraints)
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 2. Groq High-Speed LLM Layer (llm.py)                      │
+│    - Model: qwen/qwen3.8-27b (ultra-low latency < 400ms)    │
+│    - Persona: Authentic Karachi repair artisan (Ustaad Bhai)│
+│    - Rephrases into natural, warm Roman Urdu / English      │
+│    - PROHIBITED from changing verdict or downplaying hazard │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 3. Client Presentation & Audit Why-Panel                   │
+│    - Displays: Verdict Banner + Groq Phrased Advice         │
+│    - Shows: [🔍 View Canonical Rule Text] comparison box   │
+│    - Real-Time Toggle: Switch between Groq LLM and Raw     │
+│    - 100% Offline Fallback: Serves rule text if no internet │
+└─────────────────────────────────────────────────────────────┘
+```
+
+- **Configuration:** Insert your API key into `.env`:
+  ```bash
+  GROQ_API_KEY=gsk_your_key_here
+  GROQ_MODEL=qwen/qwen3.8-27b
+  ```
+- **Dual Whisper STT:** Audio input automatically uses Groq's cloud `whisper-large-v3-turbo` for near-instant transcription when connected, falling back seamlessly to local `faster-whisper` CPU transcription when air-gapped.
 
 ---
 

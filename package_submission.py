@@ -20,13 +20,16 @@ EXPORT_DIR = ROOT / "submission_export"
 FILES_TO_PACKAGE = [
     # Core Engine & Server
     "engine.py",
+    "llm.py",
     "main.py",
     "logger.py",
     "rules.yaml",
     "synonyms.yaml",
     "requirements.txt",
     "run.bat",
+    ".env.example",
     "test_engine.py",
+    "test_llm.py",
     # Frontend
     "static/index.html",
     # Evaluation & Data

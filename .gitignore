@@ -40,3 +40,7 @@ Thumbs.db
 
 # Build exports (can be generated via package_submission.py)
 submission_export/
+
+# Environment / Secrets
+.env
+.env.local

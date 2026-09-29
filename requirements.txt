@@ -3,3 +3,4 @@ uvicorn[standard]
 pyyaml
 python-multipart
 faster-whisper
+requests

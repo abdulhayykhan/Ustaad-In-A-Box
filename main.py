@@ -29,6 +29,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from engine import RuleEngine
+from llm import GroqPhraser
 from logger import InteractionLogger
 
 # ---------------------------------------------------------------------------
@@ -37,8 +38,8 @@ from logger import InteractionLogger
 
 app = FastAPI(
     title="Ustaad-in-a-Box",
-    description="Phone repair technician stand-in. Rules decide the verdict; LLM only phrases.",
-    version="0.1.0",
+    description="Phone repair technician stand-in. Rules decide the verdict; Groq LLM phrases.",
+    version="0.2.0",
 )
 
 app.add_middleware(
@@ -50,6 +51,7 @@ app.add_middleware(
 
 engine = RuleEngine()
 logger = InteractionLogger()
+phraser = GroqPhraser()
 
 # ---------------------------------------------------------------------------
 # Optional: faster-whisper for local speech-to-text
@@ -87,6 +89,7 @@ threading.Thread(target=_load_whisper, daemon=True).start()
 class AskRequest(BaseModel):
     text: str
     audio_used: bool = False
+    use_llm: bool = True
 
 
 class AskResponse(BaseModel):
@@ -100,6 +103,8 @@ class AskResponse(BaseModel):
     is_safety_stop: bool = False
     all_matched_rules: list[str] = []
     log_id: str
+    phrased_by: str = "deterministic_rule_engine"
+    canonical_rule_answer: Optional[str] = None
 
 
 # ---------------------------------------------------------------------------
@@ -119,11 +124,19 @@ def ask(body: AskRequest):
         raise HTTPException(status_code=400, detail="Empty text.")
 
     decision = engine.decide(body.text.strip())
+    canonical_answer = decision.answer
+    phrased_by = "deterministic_rule_engine"
+
+    if body.use_llm and phraser.is_available():
+        final_answer, phrased_by = phraser.phrase(body.text.strip(), decision)
+    else:
+        final_answer = canonical_answer
+
     entry = logger.log(body.text.strip(), decision, audio_used=body.audio_used)
 
     return AskResponse(
         verdict=decision.verdict,
-        answer=decision.answer,
+        answer=final_answer,
         rule_id=decision.rule_id,
         rule_label=decision.rule_label,
         source=decision.source,
@@ -132,6 +145,8 @@ def ask(body: AskRequest):
         is_safety_stop=decision.is_safety_stop,
         all_matched_rules=decision.all_matched_rules,
         log_id=entry["id"],
+        phrased_by=phrased_by,
+        canonical_rule_answer=canonical_answer if phrased_by != "deterministic_rule_engine" else None,
     )
 
 
@@ -140,8 +155,17 @@ async def transcribe(audio: UploadFile = File(...)):
     """
     Receive a WebM/WAV audio blob from the browser push-to-talk button.
     Returns { transcript, language, confidence }.
-    Uses single-pass transcription with VAD filter.
+    Uses Groq Whisper-large-v3-turbo if online, falling back to local faster-whisper.
     """
+    content = await audio.read()
+
+    # 1. Try Groq Whisper cloud endpoint if available (near-zero latency)
+    if phraser.is_available():
+        groq_result = phraser.transcribe(content, filename=audio.filename or "audio.webm")
+        if groq_result and groq_result.get("transcript"):
+            return groq_result
+
+    # 2. Offline fallback: local faster-whisper on CPU
     if _whisper_model is None:
         return {
             "transcript": "",
@@ -152,7 +176,6 @@ async def transcribe(audio: UploadFile = File(...)):
 
     # Write to a temp file (faster-whisper needs a path)
     suffix = ".webm"
-    content = await audio.read()
     with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
         tmp.write(content)
         tmp_path = tmp.name
@@ -181,11 +204,23 @@ async def transcribe(audio: UploadFile = File(...)):
             "language": info.language,
             "language_probability": round(info.language_probability, 3),
             "confidence": round(confidence, 3),
+            "engine": "local:faster-whisper",
         }
     except Exception as exc:
         return {"transcript": "", "language": "?", "confidence": 0.0, "error": str(exc)}
     finally:
         Path(tmp_path).unlink(missing_ok=True)
+
+
+@app.get("/api/llm-status")
+def llm_status():
+    """Return Groq LLM integration status."""
+    return {
+        "available": phraser.is_available(),
+        "provider": "Groq",
+        "model": phraser.model,
+        "role": "Conversational phrasing layer (deterministic rule engine retains 100% verdict authority)",
+    }
 
 
 @app.get("/api/logs")

@@ -417,9 +417,13 @@ footer {
       <div class="brand-sub">Phone Repair Stand-In · Rocketathon 2026</div>
     </div>
   </div>
-  <div style="display:flex;gap:8px;align-items:center;">
+  <div style="display:flex;gap:10px;align-items:center;">
+    <label style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text-dim);cursor:pointer;background:var(--bg3);padding:4px 10px;border-radius:999px;border:1px solid var(--border);">
+      <input type="checkbox" id="groqToggle" checked style="accent-color:var(--green);cursor:pointer;" onchange="updateLlmBadge()" />
+      <span id="groqLabel">⚡ Groq LLM: ON</span>
+    </label>
     <span class="pill" id="whisper-pill">STT: checking…</span>
-    <span class="pill online">⬤ Offline</span>
+    <span class="pill online" id="modePill">● Dual Engine</span>
   </div>
 </header>
 
@@ -479,6 +483,16 @@ footer {
       </div>
       <div class="answer-body">
         <div class="answer-text" id="answerText">—</div>
+
+        <!-- Canonical Rule expander if LLM rephrased -->
+        <div id="canonicalBox" style="display:none;margin-top:12px;padding:10px 14px;background:var(--bg3);border:1px dashed var(--border);border-radius:8px;font-size:0.82rem;color:var(--text-dim);text-align:left;">
+          <div style="font-weight:600;color:var(--yellow);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;">
+            <span>🔍 Canonical Deterministic Rule Text:</span>
+            <span id="phrasedByBadge" style="font-size:0.7rem;color:var(--green);font-family:var(--mono);"></span>
+          </div>
+          <div id="canonicalText" style="line-height:1.45;color:var(--text);"></div>
+        </div>
+
         <div class="tts-row">
           <button class="btn btn-tts" onclick="speakAnswer()" id="speakBtn">🔊 Bolo</button>
           <button class="btn btn-tts" onclick="stopSpeaking()">⏹ Band karo</button>
@@ -504,6 +518,10 @@ footer {
     <div class="tab-panel active" id="panel-why">
       <div class="why-empty" id="whyEmpty">Ask a question to see which rule fired.</div>
       <div id="whyContent" style="display:none">
+        <div class="why-section">
+          <div class="why-label">Generation Layer</div>
+          <div class="why-value mono" id="wEngine" style="font-size:0.75rem;color:var(--green)">—</div>
+        </div>
         <div class="why-section">
           <div class="why-label">Rule ID</div>
           <div class="why-value mono" id="wRuleId">—</div>
@@ -630,11 +648,13 @@ async function submitQuery(text, audioUsed = false) {
   hideConfirm();
   setAvatarState('thinking');
 
+  const useLlm = document.getElementById('groqToggle') ? document.getElementById('groqToggle').checked : true;
+
   try {
     const res = await fetch('/api/ask', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, audio_used: audioUsed }),
+      body: JSON.stringify({ text, audio_used: audioUsed, use_llm: useLlm }),
     });
     const data = await res.json();
     displayAnswer(data, text);
@@ -665,6 +685,16 @@ function displayAnswer(data, inputText) {
   // Answer text
   document.getElementById('answerText').textContent = data.answer;
 
+  // Canonical box (shows original deterministic rule advice if rephrased by LLM)
+  const cBox = document.getElementById('canonicalBox');
+  if (data.canonical_rule_answer) {
+    cBox.style.display = 'block';
+    document.getElementById('canonicalText').textContent = data.canonical_rule_answer;
+    document.getElementById('phrasedByBadge').textContent = data.phrased_by ? data.phrased_by.replace('groq:', '⚡ Groq: ') : '⚡ Groq LLM';
+  } else {
+    cBox.style.display = 'none';
+  }
+
   // Rule pill
   const rp = document.getElementById('rulePillText');
   rp.textContent = data.rule_id
@@ -685,6 +715,11 @@ function displayAnswer(data, inputText) {
 function populateWhy(data) {
   document.getElementById('whyEmpty').style.display = 'none';
   document.getElementById('whyContent').style.display = 'block';
+
+  const wEng = document.getElementById('wEngine');
+  if (wEng) {
+    wEng.textContent = data.phrased_by ? data.phrased_by.replace('groq:', 'Groq Cloud (') + (data.phrased_by.startsWith('groq:') ? ')' : '') : 'Deterministic Rule Engine';
+  }
 
   document.getElementById('wRuleId').textContent    = data.rule_id    || '(none — out-of-rules)';
   document.getElementById('wRuleLabel').textContent = data.rule_label || '—';
@@ -963,6 +998,45 @@ function switchTab(name) {
   }
   draw(0);
 })();
+
+// ── Groq LLM Status & Badge ─────────────────────────────────────
+function updateLlmBadge() {
+  const toggle = document.getElementById('groqToggle');
+  const label = document.getElementById('groqLabel');
+  if (toggle && label) {
+    label.textContent = toggle.checked ? '⚡ Groq LLM: ON' : '⚙️ Rule Engine: RAW';
+  }
+}
+
+async function checkLlmStatus() {
+  try {
+    const r = await fetch('/api/llm-status');
+    const d = await r.json();
+    const toggle = document.getElementById('groqToggle');
+    const label = document.getElementById('groqLabel');
+    const modePill = document.getElementById('modePill');
+    if (d && d.available) {
+      if (toggle) toggle.checked = true;
+      if (label) label.textContent = '⚡ Groq LLM: ON';
+      if (modePill) {
+        modePill.textContent = '⚡ Groq + Rules';
+        modePill.className = 'pill online';
+      }
+    } else {
+      if (toggle) {
+        toggle.checked = false;
+        toggle.disabled = true;
+      }
+      if (label) label.textContent = '⚙️ Deterministic (Offline)';
+      if (modePill) {
+        modePill.textContent = '⬤ Offline Rules';
+      }
+    }
+  } catch (e) {
+    console.warn('LLM status check skipped:', e);
+  }
+}
+checkLlmStatus();
 
 // ── Utils ──────────────────────────────────────────────────────
 function escHtml(s) {
