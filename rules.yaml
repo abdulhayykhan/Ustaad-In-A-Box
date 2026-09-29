@@ -1,0 +1,258 @@
+# Ustaad-in-a-Box — Rule Database
+# Rules authored from technician interview content.
+# Each rule requires a source timestamp from the interview recording.
+# Edit 'say' fields with the technician's actual wording after interview.
+# severity: safety_stop | caution | normal
+# ---
+
+- id: BAT-003
+  label: "Swollen battery"
+  when: [battery_swollen]
+  severity: safety_stop
+  verdict: ESCALATE
+  say: >
+    Yaar, swollen battery serious cheez hai. Abhi charging band karo aur
+    phone use karna bhi chhoro. Isko mat dabao, mat kholne ki koshish karo.
+    Mujhse milne aao — swollen battery leak ya catch fire kar sakti hai.
+  escalate: true
+  reason: "Swollen battery can leak, catch fire, or explode. Stop use immediately."
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: BAT-004
+  label: "Leaking or dented battery"
+  when: [battery_leaking]
+  severity: safety_stop
+  verdict: ESCALATE
+  say: >
+    Bhai, agar battery se liquid nikal raha hai ya dented hai toh yeh
+    emergency hai. Phone band karo, khuli aur hawa-daar jagah kisi non-flammable
+    surface (farsh ya pathar) pe rakh do. Chemical ko direct skin se touch mat karna.
+    Mujhse milne aao — isko kisi band dabbe mein airtight mat dabana.
+  escalate: true
+  reason: "Leaking battery is a chemical and fire hazard. Needs immediate professional handling."
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: SMK-001
+  label: "Smoke or burning smell"
+  when: [smoke_smell]
+  severity: safety_stop
+  verdict: ESCALATE
+  say: >
+    Agar dhuan ya jalane ki smell aa rahi hai toh abhi power off karo.
+    Charger se nikalo. Mujhe call karo. Yeh wait karne wali cheez nahi hai.
+  escalate: true
+  reason: "Smoke or burning smell indicates internal failure risk. Power off immediately."
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: WAT-001
+  label: "Water damage — device currently on"
+  when: [water_damage, device_on]
+  severity: safety_stop
+  verdict: ESCALATE
+  say: >
+    Agar phone abhi on hai aur paani gira hai toh FORAN power off karo. Chawal mein
+    rakhne ki ghalti bilkul mat karna — chawal se moisture nahi nikalta balke starch
+    port ko kharab karta hai. Charger mat lagana. SIM tray nikaal kar hawa mein rakho
+    aur foran shop le aao takay ultrasonic cleaning se board bach jaye.
+  escalate: true
+  reason: "Powering on water-damaged device risks short-circuit damage."
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: WAT-002
+  label: "Water damage — device already off"
+  when: [water_damage]
+  severity: caution
+  verdict: CAUTION
+  say: >
+    Bohot achha kiya ke phone off rakha hai. Isko bilkul ON mat karna aur charger
+    mat lagana. Chawal mein mat daalna — silica gel pouch ho toh theek hai, warna
+    khuli hawa mein dry hone do. Sab se behtar yeh hai ke mujhe check karwao takay
+    andar se board khol kar dry aur saaf kiya jaye, warna 2-3 din baad corrosion se
+    phone dead ho sakta hai.
+  escalate: false
+  reason: null
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: WAT-003
+  label: "Water damage — connected to charger"
+  when: [water_damage, charging]
+  severity: safety_stop
+  verdict: ESCALATE
+  say: >
+    Paani girne ke baad charger lagana sakht khatarnaak hai! Hairdryer ya dhoop se
+    paani mukammal khushk nahi hota, balke moisture ICs ke neeche trapped rehta hai.
+    Charger lagane se motherboard foran short-circuit ho kar jal sakta hai.
+    Abhi charger foran nikalo, phone bilkul on mat karo, aur shop le aao takay proper
+    chemical wash (isopropyl) ho sakay.
+  escalate: true
+  reason: "Charging a water-exposed device risks catastrophic motherboard short-circuit and component burn."
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: CHG-002
+  label: "Overheating while charging"
+  when: [overheating, charging]
+  severity: safety_stop
+  verdict: ESCALATE
+  say: >
+    Charging ke waqt garam ho raha hai? Abhi charger nikalo. Yeh adapter
+    ya battery ka masla ho sakta hai. Original charger use kar rahe ho?
+    Agar yeh bar bar ho raha hai toh mujhse milna — charge karte karte
+    fire bhi lag sakti hai.
+  escalate: true
+  reason: "Overheating during charging can indicate faulty adapter or failing battery."
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: CHG-001
+  label: "Device not charging"
+  when: [charging_fault]
+  severity: normal
+  verdict: CAUTION
+  say: >
+    Pehle check karo: doosra cable try karo, doosra adapter try karo.
+    Charging port mein dust toh nahi? Toothpick se slowly saaf karo.
+    Agar phir bhi nahi ho raha toh zyada tor nahi — mujhse milna,
+    port replace ho sakta hai.
+  escalate: false
+  reason: null
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: BAT-001
+  label: "Fast battery drain"
+  when: [battery_drain]
+  severity: normal
+  verdict: CAUTION
+  say: >
+    Battery jaldi khatam hoti hai? Pehle check karo kaunsa app zyada battery
+    le raha hai — Settings > Battery. Background apps band karo, screen
+    brightness kam karo. Agar battery 2 saal se zyada purani hai toh
+    replace karne ka waqt aa gaya hai. Mujhse milna, original ya
+    achhi quality ki battery lagwao.
+  escalate: false
+  reason: null
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: SCR-000
+  label: "Cracked screen — general inquiry"
+  when: [cracked_screen]
+  severity: normal
+  verdict: CAUTION
+  say: >
+    Screen toot gayi hai? Pehle yeh check karo ke touch theek chal raha hai ya nahi.
+    Agar touch bilkul normal chal raha hai toh fauri tempered glass laga lo takay
+    ungli na kate aur crack na barhe. Lekin agar touch kaam nahi kar raha ya andar
+    display pe lakeerein aa gayi hain toh poora panel change hoga. Shop pe dikha do.
+  escalate: false
+  reason: null
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: SCR-001
+  label: "Cracked screen — touch working"
+  when: [cracked_screen, touch_working]
+  severity: normal
+  verdict: SAFE
+  say: >
+    Agar touch kaam kar raha hai toh ek kaam karo — tempered glass
+    laga lo upar se. Crack aur nahi barhega aur ungli cut bhi nahi hogi.
+    Lekin zyada girne do mat — next impact mein andar wala panel bhi
+    ja sakta hai, jo zyada mehnga hai.
+  escalate: false
+  reason: null
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: SCR-002
+  label: "Cracked screen — touch not working"
+  when: [cracked_screen, touch_broken]
+  severity: caution
+  verdict: CAUTION
+  say: >
+    Touch kaam nahi kar raha matlab screen assembly complete damage hai.
+    Replace karni padegi. Pehle mujhse pooch lo — phone ke model ke
+    hisaab se price alag hota hai. Kuch phones mein screen replace
+    karna worth it hai, kuch mein nahi.
+  escalate: false
+  reason: null
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: SCR-003
+  label: "Screen internal damage — purple ink / lines / bleeding"
+  when: [screen_ink_bleed]
+  severity: caution
+  verdict: CAUTION
+  say: >
+    Screen pe purple ya black ink bleed ya colored lakeerein aa rahi hain
+    toh yeh andar ka OLED/display matrix rupture hone ki nishani hai. Touch chal
+    bhi raha ho toh yeh aahista aahista poori screen ko 24 ghante mein black out
+    kar dega. Fauri apna zaroori data aur WhatsApp backup le lo pehle, aur phir
+    display panel replace karwane le aao.
+  escalate: false
+  reason: null
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: DEV-001
+  label: "Slow or hanging device"
+  when: [slow_device]
+  severity: normal
+  verdict: CAUTION
+  say: >
+    Slow phone ke liye pehle yeh try karo: storage full toh nahi?
+    Gallery aur WhatsApp files clear karo. Apps uninstall karo jo
+    use nahi karte. Factory reset se pehle mujhse baat karo —
+    zyada tar slow phones storage se theek hote hain.
+  escalate: false
+  reason: null
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: DEV-002
+  label: "Phone overheating — general"
+  when: [overheating]
+  severity: caution
+  verdict: CAUTION
+  say: >
+    Mobile bohot garam ho raha hai toh pehle check karo: dhoop mein toh nahi rakha?
+    Heavy apps ya gaming band karo aur mota back cover hata do.
+    Lekin agar bina use kiye ya standby pe bhi bohot garam ho raha hai,
+    toh foran power off karo aur mujhe dikhao — yeh battery ya motherboard IC ka short-circuit ho sakta hai.
+  escalate: false
+  reason: null
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: LAP-001
+  label: "Laptop overheating"
+  when: [laptop, overheating]
+  severity: caution
+  verdict: CAUTION
+  say: >
+    Laptop overheating ka aksar matlab hai fan ke andar dust jam gaya hai.
+    Laptop ke neeche se hawa nahi aa rahi? Flat surface pe mat rakhna —
+    kitaab pe rakh lo. Theek se theek karne ke liye mujhse milna, fan
+    saaf karna padega. Khud mat kholna agar pehle kabhi nahi kiya.
+  escalate: false
+  reason: null
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: PWR-001
+  label: "Power bank fault or opening"
+  when: [power_bank, opening_device]
+  severity: safety_stop
+  verdict: ESCALATE
+  say: >
+    Power bank khud mat kholna bilkul bhi. Andar lithium cells hoti hain
+    jo puncture hone par bahut dangerous hoti hain. Koi bhi masla ho
+    toh mujhse lao.
+  escalate: true
+  reason: "Opening power banks risks puncturing lithium cells — serious fire/explosion hazard."
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+
+- id: REP-001
+  label: "Repair vs replace"
+  when: [repair_vs_replace]
+  severity: normal
+  verdict: CAUTION
+  say: >
+    Yeh decide karne ke liye phone ki umar aur masle ki cost dono
+    dekhni padti hain. Generally, agar repair ki cost phone ki
+    value ka 50% se zyada hai toh replace karna better hai.
+    Mujhe phone lao, main estimate de dunga.
+  escalate: false
+  reason: null
+  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"

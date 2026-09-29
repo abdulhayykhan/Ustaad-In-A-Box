@@ -1,0 +1,313 @@
+# Symptom tag → keyword/phrase mappings
+# Keys are symptom tags used in rules.yaml `when:` lists.
+# Values are lists of keywords/phrases that trigger that tag.
+# Add Roman Urdu, Urdu transliterations, and English variants.
+# Case-insensitive matching is applied at runtime.
+
+battery_swollen:
+  - swollen
+  - swell
+  - pholi
+  - phula
+  - phula hua
+  - phool
+  - phooli
+  - phoola
+  - phoolna
+  - phoolne
+  - phooli hui
+  - phoola hua
+  - phool gai
+  - phool gayi
+  - battery phool
+  - battery phooli
+  - battery phoola
+  - battery phooli hui
+  - foola
+  - fooli
+  - fulna
+  - bulging
+  - bulge
+  - ublti
+  - ublna
+  - ublta
+  - back ublta
+  - battery bari
+  - battery moti
+  - cover utha
+  - back utha
+  - back khul
+
+battery_drain:
+  - battery drain
+  - battery drains
+  - jaldi khatam
+  - battery khatam
+  - fast drain
+  - backup nahi
+  - nahi chalti
+  - khatam hojati
+  - quickly dies
+  - dies fast
+  - battery problem
+  - backup kam
+  - percentage girta
+  - charge nahi rehti
+  - jaldi khtm
+  - khtm hori
+  - khtm horaha
+  - khtm ho rahi
+  - khtm ho raha
+  - khatam hori
+  - khatam horaha
+  - khatam ho rahi
+  - khatam ho raha
+  - buht jaldi khtm
+  - bohot jaldi khtm
+  - buht jaldi khatam
+  - bohot jaldi khatam
+  - jaldi khtm hori
+  - jaldi khatam hori
+  - battery khtm
+  - battery jaldi
+
+battery_leaking:
+  - leak
+  - leaking
+  - liquid nikal
+  - liquid nikla
+  - corrosion
+  - rust
+  - zang
+  - seeping
+  - wet battery
+  - battery mein liquid
+
+smoke_smell:
+  - fire
+  - aag
+  - aag lag
+  - fire pakad
+  - aag lag rahi
+  - dhuan
+  - smoke
+  - jal raha
+  - jalane ki boo
+  - burning smell
+  - burning
+  - smell aa rahi
+  - boo aa rahi
+  - kuch jal
+  - boo ati
+  - boo arahi
+
+water_damage:
+  - pani gira
+  - paani gira
+  - got wet
+  - phone bheega
+  - phone bheeg
+  - bheeg gaya
+  - bheeg gayi
+  - bheega hua
+  - in water
+  - fell in water
+  - dropped in water
+  - rained on
+  - baarish mein
+  - barish mein
+  - liquid gira
+  - paani mein gira
+  - paani mai gira
+  - pani mai gira
+  - paani me gira
+  - pani me gira
+  - paani mai gir
+  - pani mai gir
+  - paani me gir
+  - pani me gir
+  - paani mein gir
+  - pani mein gir
+  - paani mai
+  - pani mai
+  - paani me
+  - pani me
+  - paani main
+  - pani mein
+  - hairdryer
+  - hair dryer
+  - sukha kar
+  - sukha ke
+  - toilet
+  - sink
+
+device_on:
+  - on hai
+  - chalu hai
+  - on ho
+  - working hai
+  - chal raha
+  - screen on
+  - still on
+  - abhi on
+  - powered on
+
+overheating:
+  - garam
+  - overheating
+  - overheat
+  - hot
+  - heat
+  - bahut garam
+  - bohot garam
+  - buht garam
+  - zaada garam
+  - zada garam
+  - buht zaada garam
+  - bohot zyada garam
+  - garam hora
+  - garam hora hai
+  - garam horaha
+  - garam ho raha
+  - garam hori
+  - garam hori hai
+  - heat up
+  - heating
+  - burning hot
+  - gets hot
+  - garm ho
+  - temperature zyada
+  - jal raha hands
+
+charging:
+  - charging
+  - charge ho raha
+  - charger laga
+  - plug in
+  - plug kiya
+  - charger mein
+
+charging_fault:
+  - charge nahi
+  - charging nahi
+  - not charging
+  - won't charge
+  - charge ho raha nahi
+  - charging nahi ho rahi
+  - charge nahi hoti
+  - charger kaam nahi
+  - nahi charge
+  - charge problem
+
+cracked_screen:
+  - screen toot
+  - screen tooti
+  - crack
+  - cracked
+  - toota
+  - toot gayi
+  - toot gyi
+  - toot gya
+  - toot gaya
+  - screen toot gyi
+  - screen toot gya
+  - shattered
+  - screen phoot
+  - display toot
+  - display crack
+  - glass toot
+  - screen broken
+  - toot gai screen
+
+touch_working:
+  - touch kaam
+  - touch chal
+  - touch work
+  - but touch
+  - screen touch hai
+  - touch theek
+
+touch_broken:
+  - touch nahi
+  - touch kaam nahi
+  - touch khatam
+  - touch dead
+  - touch gone
+  - cant touch
+  - no touch
+  - touch broken
+  - touch nahi ata
+  - touch not working
+  - screen not working
+
+slow_device:
+  - slow
+  - sust
+  - hang
+  - hangs
+  - hanging
+  - freeze
+  - stuck
+  - lag
+  - lagging
+  - sluggish
+  - aahista
+  - dheema
+  - response nahi
+  - ruk jata
+
+laptop:
+  - laptop
+  - notebook
+  - computer
+  - pc
+
+repair_vs_replace:
+  - theek karun
+  - replace karun
+  - worth it
+  - paisa lagaun
+  - repair worth
+  - repair or replace
+  - should I repair
+  - fix or replace
+  - fix or buy
+  - buy new
+  - worth repairing
+  - cost lagega
+  - kitna lagega
+  - fix karna chahiye
+  - naya lun
+
+opening_device:
+  - kholna
+  - khol
+  - open karna
+  - open karu
+  - can I open
+  - how to open
+  - andar dekhna
+  - andar dekh
+  - fix myself
+  - khud theek
+
+power_bank:
+  - power bank
+  - powerbank
+  - portable charger
+  - external battery
+  - backup battery
+
+screen_ink_bleed:
+  - purple ink
+  - ink bleed
+  - display bleed
+  - black spots
+  - purple spots
+  - lakeerein
+  - lines on screen
+  - display lines
+  - rang phail
+  - rang nikal
+  - ink nikal
+
