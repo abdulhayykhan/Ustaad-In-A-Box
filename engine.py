@@ -54,11 +54,30 @@ class RuleEngine:
         "battery_leaking",
     }
 
+    # Hazard tags eligible for contextual negation suppression
+    # (e.g. "battery leak nahi hui", "not hot, not swollen").
+    # Fault tags with intrinsic negative phrasing (e.g. "charge nahi ho raha") are NOT in this set.
+    NEGATABLE_TAGS: set[str] = {
+        "battery_swollen",
+        "battery_leaking",
+        "overheating",
+        "water_damage",
+        "smoke_smell",
+    }
+
+    NEGATION_BEFORE_RE = re.compile(r"\b(not|no|nahi|nhi|never)\b", re.IGNORECASE)
+    NEGATION_AFTER_RE = re.compile(r"\b(nahi|nhi|not|no)\b", re.IGNORECASE)
+    CLAUSE_BOUNDARY_RE = re.compile(r"[,;.\n]|(\b(but|lekin|magar|par|aur|and)\b)", re.IGNORECASE)
+
     # Topics explicitly outside scope — catch them before rule matching.
     OUT_OF_SCOPE_PHRASES: list[str] = [
         "medical", "doctor", "hospital", "dawai", "dawa", "medicine",
         "legal", "lawyer", "police fir", "court", "kanoon", "wakeel",
-        "price", "kitna price", "kitne paise", "rate", "quote", "warranty",
+        "price", "kitna price", "kitne paise", "kitne ka aayega", "kitne ka",
+        "kitnay ka aayega", "kitnay ka", "kitna kharcha", "kitna kharch",
+        "kitna lagega", "kitne lagenge", "kitnay lagenge", "kitne ki",
+        "kitnay ki", "rate", "quote", "cost", "charges", "estimate",
+        "paise lagenge", "paisay lagenge", "warranty",
         "data recovery", "data wapas", "photos wapas", "files wapas",
         "unlock", "unlock karo", "bypass", "frp bypass", "pattern unlock",
         "microwave", "fridge", "refrigerator", "washing machine",
@@ -127,12 +146,43 @@ class RuleEngine:
         # 3. Match rules
         return self.match_rules(tags, text)
 
+    def _is_match_negated(self, text: str, start: int, end: int) -> bool:
+        """
+        Check if a matched token span is syntactically negated in its local clause.
+        Restricted to clause boundaries (punctuation and conjunctions) to prevent cross-clause false positives.
+        """
+        # Look backwards up to 30 characters without crossing clause boundaries
+        pre_window = text[max(0, start - 30):start]
+        boundaries = [m.end() for m in self.CLAUSE_BOUNDARY_RE.finditer(pre_window)]
+        pre_segment = pre_window[max(boundaries):] if boundaries else pre_window
+        if self.NEGATION_BEFORE_RE.search(pre_segment):
+            return True
+
+        # Look forwards up to 30 characters without crossing clause boundaries
+        post_window = text[end:min(len(text), end + 30)]
+        boundaries_post = [m.start() for m in self.CLAUSE_BOUNDARY_RE.finditer(post_window)]
+        post_segment = post_window[:min(boundaries_post)] if boundaries_post else post_window
+        if self.NEGATION_AFTER_RE.search(post_segment):
+            return True
+
+        return False
+
     def extract_tags(self, text: str) -> list[str]:
-        """Return list of matched symptom tags, deduplicated and resolved for conflicts."""
+        """Return list of matched symptom tags, deduplicated and resolved for conflicts and negations."""
         found: list[str] = []
         for tag, pattern in self._patterns.items():
-            if pattern.search(text):
-                found.append(tag)
+            if tag in self.NEGATABLE_TAGS:
+                # Find all occurrences; keep tag only if at least one match is NOT negated
+                has_unnegated_match = False
+                for match in pattern.finditer(text):
+                    if not self._is_match_negated(text, match.start(), match.end()):
+                        has_unnegated_match = True
+                        break
+                if has_unnegated_match:
+                    found.append(tag)
+            else:
+                if pattern.search(text):
+                    found.append(tag)
 
         # Conflict & Negation Resolution:
         # If touch is reported broken, suppress touch_working
@@ -162,7 +212,15 @@ class RuleEngine:
         # Safety-stop rules take absolute priority
         safety_stops = [r for r in matched if r.get("severity") == "safety_stop"]
         if safety_stops:
-            # Pick first safety stop (they're listed in priority order in YAML)
+            # Prioritize device-specific safety stops (e.g. power_bank, laptop) over generic ones,
+            # then more specific condition counts, then YAML order.
+            device_tags = {"power_bank", "laptop"}
+            safety_stops.sort(
+                key=lambda r: (
+                    0 if any(t in device_tags for t in r.get("when", [])) else 1,
+                    -len(r.get("when", [])),
+                )
+            )
             rule = safety_stops[0]
             return Decision(
                 verdict="ESCALATE",

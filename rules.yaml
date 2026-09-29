@@ -16,7 +16,7 @@
     Mujhse milne aao — swollen battery leak ya catch fire kar sakti hai.
   escalate: true
   reason: "Swollen battery can leak, catch fire, or explode. Stop use immediately."
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: BAT-004
   label: "Leaking or dented battery"
@@ -30,7 +30,7 @@
     Mujhse milne aao — isko kisi band dabbe mein airtight mat dabana.
   escalate: true
   reason: "Leaking battery is a chemical and fire hazard. Needs immediate professional handling."
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: SMK-001
   label: "Smoke or burning smell"
@@ -42,7 +42,7 @@
     Charger se nikalo. Mujhe call karo. Yeh wait karne wali cheez nahi hai.
   escalate: true
   reason: "Smoke or burning smell indicates internal failure risk. Power off immediately."
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: WAT-001
   label: "Water damage — device currently on"
@@ -51,12 +51,12 @@
   verdict: ESCALATE
   say: >
     Agar phone abhi on hai aur paani gira hai toh FORAN power off karo. Chawal mein
-    rakhne ki ghalti bilkul mat karna — chawal se moisture nahi nikalta balke starch
-    port ko kharab karta hai. Charger mat lagana. SIM tray nikaal kar hawa mein rakho
-    aur foran shop le aao takay ultrasonic cleaning se board bach jaye.
+    rakhna bilkul be-faida hai kyunki chawal chip components ke andar se moisture nahi
+    kheenchna janta. Charger mat lagana. SIM tray nikaal kar phone ko hawa mein
+    rakho aur foran shop le aao takay ultrasonic cleaning se board bach jaye.
   escalate: true
   reason: "Powering on water-damaged device risks short-circuit damage."
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: WAT-002
   label: "Water damage — device already off"
@@ -65,13 +65,13 @@
   verdict: CAUTION
   say: >
     Bohot achha kiya ke phone off rakha hai. Isko bilkul ON mat karna aur charger
-    mat lagana. Chawal mein mat daalna — silica gel pouch ho toh theek hai, warna
-    khuli hawa mein dry hone do. Sab se behtar yeh hai ke mujhe check karwao takay
-    andar se board khol kar dry aur saaf kiya jaye, warna 2-3 din baad corrosion se
+    mat lagana. Chawal mein daalna be-faida hai — silica gel pouch ho toh theek hai,
+    warna khuli hawa mein dry hone do. Sab se behtar yeh hai ke mujhe check karwao takay
+    andar se board khol kar dry aur saaf kiya jaye, warna baad mein corrosion se
     phone dead ho sakta hai.
   escalate: false
   reason: null
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: WAT-003
   label: "Water damage — connected to charger"
@@ -86,7 +86,7 @@
     chemical wash (isopropyl) ho sakay.
   escalate: true
   reason: "Charging a water-exposed device risks catastrophic motherboard short-circuit and component burn."
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: CHG-002
   label: "Overheating while charging"
@@ -100,7 +100,34 @@
     fire bhi lag sakti hai.
   escalate: true
   reason: "Overheating during charging can indicate faulty adapter or failing battery."
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
+
+- id: PWR-001
+  label: "Power bank fault or opening"
+  when: [power_bank, opening_device]
+  severity: safety_stop
+  verdict: ESCALATE
+  say: >
+    Power bank khud mat kholna bilkul bhi. Andar lithium cells hoti hain
+    jo puncture hone par bahut dangerous hoti hain. Koi bhi masla ho
+    toh mujhse lao.
+  escalate: true
+  reason: "Opening power banks risks puncturing lithium cells — serious fire/explosion hazard."
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
+
+- id: PWR-002
+  label: "Power bank overheating / charging hazard"
+  when: [power_bank, overheating]
+  severity: safety_stop
+  verdict: ESCALATE
+  say: >
+    Power bank garam ya overheat hona sakht khatarnaak hai! Iske andar high-capacity
+    lithium cells hoti hain jo thermal runaway mein blast ya aag pakad sakti hain.
+    Abhi foran charger se unplug karo, kisi non-flammable farsh pe rakh do, aur isko
+    mazeed bilkul use mat karo.
+  escalate: true
+  reason: "Overheating power bank poses serious thermal runaway and cell rupture hazard."
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: CHG-001
   label: "Device not charging"
@@ -114,7 +141,7 @@
     port replace ho sakta hai.
   escalate: false
   reason: null
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: BAT-001
   label: "Fast battery drain"
@@ -123,13 +150,12 @@
   verdict: CAUTION
   say: >
     Battery jaldi khatam hoti hai? Pehle check karo kaunsa app zyada battery
-    le raha hai — Settings > Battery. Background apps band karo, screen
-    brightness kam karo. Agar battery 2 saal se zyada purani hai toh
-    replace karne ka waqt aa gaya hai. Mujhse milna, original ya
-    achhi quality ki battery lagwao.
+    le raha hai — Settings > Battery mein. Background apps aur unnecessary location/Bluetooth
+    band karo. Agar battery health 80% se kam dikha raha hai ya phone achanak switch off
+    ho raha hai, toh cell degrade ho chuka hai aur replace karwana padega.
   escalate: false
   reason: null
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: SCR-000
   label: "Cracked screen — general inquiry"
@@ -143,7 +169,7 @@
     display pe lakeerein aa gayi hain toh poora panel change hoga. Shop pe dikha do.
   escalate: false
   reason: null
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: SCR-001
   label: "Cracked screen — touch working"
@@ -157,7 +183,7 @@
     ja sakta hai, jo zyada mehnga hai.
   escalate: false
   reason: null
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: SCR-002
   label: "Cracked screen — touch not working"
@@ -171,7 +197,7 @@
     karna worth it hai, kuch mein nahi.
   escalate: false
   reason: null
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: SCR-003
   label: "Screen internal damage — purple ink / lines / bleeding"
@@ -179,14 +205,13 @@
   severity: caution
   verdict: CAUTION
   say: >
-    Screen pe purple ya black ink bleed ya colored lakeerein aa rahi hain
-    toh yeh andar ka OLED/display matrix rupture hone ki nishani hai. Touch chal
-    bhi raha ho toh yeh aahista aahista poori screen ko 24 ghante mein black out
-    kar dega. Fauri apna zaroori data aur WhatsApp backup le lo pehle, aur phir
-    display panel replace karwane le aao.
+    Screen pe purple ya black ink spots ya colored lines aane ka matlab hai andar ka
+    display matrix damage hua hai. Touch chal raha ho tab bhi yeh dhabbe waqt ke sath
+    mazeed phail sakte hain. Pehle apna zaroori data aur WhatsApp backup le lo,
+    aur phir display replacement ke liye shop check karwa lo.
   escalate: false
   reason: null
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: DEV-001
   label: "Slow or hanging device"
@@ -200,7 +225,7 @@
     zyada tar slow phones storage se theek hote hain.
   escalate: false
   reason: null
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: DEV-002
   label: "Phone overheating — general"
@@ -214,7 +239,7 @@
     toh foran power off karo aur mujhe dikhao — yeh battery ya motherboard IC ka short-circuit ho sakta hai.
   escalate: false
   reason: null
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
 - id: LAP-001
   label: "Laptop overheating"
@@ -228,20 +253,8 @@
     saaf karna padega. Khud mat kholna agar pehle kabhi nahi kiya.
   escalate: false
   reason: null
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 
-- id: PWR-001
-  label: "Power bank fault or opening"
-  when: [power_bank, opening_device]
-  severity: safety_stop
-  verdict: ESCALATE
-  say: >
-    Power bank khud mat kholna bilkul bhi. Andar lithium cells hoti hain
-    jo puncture hone par bahut dangerous hoti hain. Koi bhi masla ho
-    toh mujhse lao.
-  escalate: true
-  reason: "Opening power banks risks puncturing lithium cells — serious fire/explosion hazard."
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
 
 - id: REP-001
   label: "Repair vs replace"
@@ -249,10 +262,11 @@
   severity: normal
   verdict: CAUTION
   say: >
-    Yeh decide karne ke liye phone ki umar aur masle ki cost dono
-    dekhni padti hain. Generally, agar repair ki cost phone ki
-    value ka 50% se zyada hai toh replace karna better hai.
-    Mujhe phone lao, main estimate de dunga.
+    Yeh decide karne ke liye phone ka model, market value, aur repair ka kharcha
+    dekhna padta hai. Agar repair ka kharcha phone ki mojuda market value ke kareeb
+    aa raha ho aur parts original na mil rahe hon, toh naya phone lena behtar hota hai.
+    Lekin chhota masla jaise battery ya charging port ho toh repair karwana zaroor worth it hai.
+    Mujhe check karwao, main transparent mashwara de dunga.
   escalate: false
   reason: null
-  source: "Interview 1, 00:00:00 — BASELINE EXPERT HEURISTIC"
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"

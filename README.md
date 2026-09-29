@@ -3,7 +3,7 @@
 > **A deterministic voice-and-text stand-in for a phone repair technician, built entirely from scrap hardware and free software.**  
 > Developed for **Rocketathon 2026** (PK2047 · Expo Centre Karachi) — **Track 1: Stand-In**.
 
-[![Tests](https://img.shields.io/badge/tests-46%2F46%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-50%2F50%20passed-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)]()
 [![Python](https://img.shields.io/badge/python-3.10%20|%203.11%20|%203.12%20|%203.14-blue.svg)]()
 [![Offline](https://img.shields.io/badge/runtime-100%25%20offline-success.svg)]()
@@ -38,8 +38,8 @@ Most hackathon teams attempt to clone a teacher, doctor, or pharmacist using a g
 
 **Ustaad-in-a-Box clones a real smartphone & electronics repair technician.**
 - **Tactile, Hard Rules:** A swollen battery means *stop charging immediately*. Water damage with device on means *shut off power now*. Overheating during charging means *unplug*.
-- **Deterministic First, Generative Never for Verdicts:** The verdict is computed by strict rule-matching over timestamped interview statements. An LLM (if enabled) only does language smoothing—it **never** decides whether a device is safe or dangerous.
-- **The "Why" Panel:** Every single response displays the exact rule ID triggered, the interview recording timestamp, and the escalation reason. If no rule matches, it admits ignorance (`OUT_OF_RULES`) rather than guessing.
+- **Deterministic First, Generative Never for Verdicts:** The verdict is computed by strict rule-matching over explicit safety heuristics. An LLM (if enabled) only does language smoothing—it **never** decides whether a device is safe or dangerous.
+- **The "Why" Panel:** Every single response displays the exact rule ID triggered, the rule source provenance, and the escalation reason. If no rule matches, it admits ignorance (`OUT_OF_RULES`) rather than guessing.
 - **Ties directly into the Scrapyard theme:** The device itself is built from salvaged e-waste and speaks for the artisan whose livelihood is recycling and fixing e-waste.
 
 ---
@@ -73,7 +73,7 @@ Most hackathon teams attempt to clone a teacher, doctor, or pharmacist using a g
       ├── Verdict: SAFE | CAUTION | ESCALATE
       ├── Answer: Spoken Urdu/Roman Urdu Advice
       ├── Rule ID: (e.g. BAT-003)
-      ├── Interview Source Timestamp: (e.g. Interview 1, 00:14:22)
+      ├── Rule Provenance: (e.g. UNVERIFIED BASELINE)
       └── Matched Symptom Tags: ['battery_swollen']
              │
              ├──────────────────────────┐
@@ -91,11 +91,11 @@ Most hackathon teams attempt to clone a teacher, doctor, or pharmacist using a g
 ```
 Ustaad-In-A-Box/
 ├── engine.py              # Core deterministic rule engine & tag extractor
-├── rules.yaml             # Authored rule definitions with interview timestamps
+├── rules.yaml             # Authored rule definitions with source provenance
 ├── synonyms.yaml          # Multi-lingual dictionary (Urdu / Roman Urdu / English)
 ├── logger.py              # JSONL interaction logger & CSV review sheet exporter
 ├── main.py                # FastAPI backend & audio transcription endpoint
-├── test_engine.py         # Automated test suite (34/34 passing)
+├── test_engine.py         # Automated test suite (50/50 passing)
 ├── requirements.txt       # Python dependencies (all free & open-source)
 ├── run.bat                # Windows 1-click startup batch script
 │
@@ -186,9 +186,9 @@ For judges, mentors, and developers wanting deep insight into each subsystem:
 2. [**Bill of Provenance (`docs/BILL_OF_PROVENANCE.md`)**](docs/BILL_OF_PROVENANCE.md)  
    Full audit of physical scrap hardware (laptop, phone, speakers) and free/open-source software licenses.
 3. [**Honesty Note & Review Scores (`docs/HONESTY_NOTE.md`)**](docs/HONESTY_NOTE.md)  
-   Statistical evaluation of the 30-question technician review, known audio/linguistic failure modes, and safety edge cases.
+   Technical evaluation of the bench evaluation log, bug discoveries, known audio/linguistic failure modes, and safety edge cases.
 4. [**Rule Authoring & Interview Protocol (`docs/RULE_AUTHORING_GUIDE.md`)**](docs/RULE_AUTHORING_GUIDE.md)  
-   The human capture process: consent form, interview question script, timestamp verification, and YAML authoring.
+   The human capture process: consent form, interview question script, provenance tracking, and YAML authoring.
 5. [**REST API Reference (`docs/API_REFERENCE.md`)**](docs/API_REFERENCE.md)  
    Detailed documentation of all JSON endpoints, request/response models, and status codes.
 6. [**Judge Demo Script (`docs/DEMO_SCRIPT.md`)**](docs/DEMO_SCRIPT.md)  
@@ -237,7 +237,7 @@ Unlike black-box AI prototypes that attempt to fake omniscient capability:
   - `input`: The exact raw text query.
   - `verdict`: `SAFE`, `CAUTION`, or `ESCALATE`.
   - `rule_id`: The ID of the rule that fired.
-  - `review_agree` / `review_disagree` / `review_should_have_escalated`: Review columns filled by the real human technician.
+  - `review_agree` / `review_disagree` / `review_should_have_escalated`: Review columns to be filled by the real human technician.
 - Known failure modes (e.g., compound symptoms with conflicting advice, heavy regional accent STT dropouts) are documented in the [Honesty Note](docs/HONESTY_NOTE.md).
 
 ---
@@ -251,7 +251,7 @@ Unlike black-box AI prototypes that attempt to fake omniscient capability:
 - **Answer:** Yes! The FastAPI backend runs on the salvaged laptop. Connect any smartphone or tablet to the laptop's Wi-Fi hotspot and navigate to `http://<LAPTOP_IP>:8000`. The phone becomes the interactive touch screen, microphone, and speaker "face".
 
 ### 3. How do I add or modify a rule?
-- **Answer:** Edit `rules.yaml` directly. Add the interview source timestamp and your chosen phrasing. Run `python test_engine.py` to ensure all tests pass.
+- **Answer:** Edit `rules.yaml` directly. Add the rule source provenance and your chosen phrasing. Run `python test_engine.py` to ensure all tests pass.
 
 ## 👥 Authors & Acknowledgments
 

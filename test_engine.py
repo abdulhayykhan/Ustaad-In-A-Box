@@ -31,6 +31,7 @@ TESTS = [
     ("CHG-002 en: overheating while charging", "phone gets very hot while charging",  "ESCALATE", "CHG-002"),
     ("CHG-002 ro: garam while charging",       "charging karte waqt bahut garam hota","ESCALATE", "CHG-002"),
     ("PWR-001 en: open power bank",            "can I open my power bank",            "ESCALATE", "PWR-001"),
+    ("PWR-002 ro: power bank overheating",     "power bank garam ho gaya charge karte waqt", "ESCALATE", "PWR-002"),
 
     # ── Caution / Normal ─────────────────────────────────────────────────────
     ("WAT-002 en: wet but off",                "phone got wet, I turned it off",      "CAUTION",  "WAT-002"),
@@ -61,14 +62,17 @@ TESTS = [
     ("PROBE: hairdryer + charging (WAT-003)",   "Fell in water, dried with hairdryer, now charging", "ESCALATE", "WAT-003"),
     ("PROBE: fire in phone not blocked by fir", "Phone fire pakad raha hai", "ESCALATE", "SMK-001"),
     ("PROBE: frustrated not blocked by rust",   "I am frustrated, my phone hangs", "CAUTION", "DEV-001"),
+    ("PROBE: battery leak negation",           "battery leak nahi hui",               "ESCALATE", None),
+    ("PROBE: not hot not swollen negation",     "phone is not hot, not swollen",       "ESCALATE", None),
 
     # ── Out-of-scope — must ALL be ESCALATE ─────────────────────────────────
-    ("OOS: price",       "how much does it cost to repair",  "ESCALATE", None),
-    ("OOS: unlock",      "can you unlock my phone",          "ESCALATE", None),
-    ("OOS: medical",     "is radiation from phone harmful",  "ESCALATE", None),
-    ("OOS: data",        "data recovery kaise hogi",         "ESCALATE", None),
-    ("OOS: warranty",    "warranty claim karna hai",         "ESCALATE", None),
-    ("OOS: empty",       "",                                 None,       None),  # handled by API layer
+    ("OOS: price",             "how much does it cost to repair",            "ESCALATE", None),
+    ("OOS: price roman urdu",  "iphone screen crack ho gaya kitne ka aayega", "ESCALATE", None),
+    ("OOS: unlock",            "can you unlock my phone",                    "ESCALATE", None),
+    ("OOS: medical",           "is radiation from phone harmful",            "ESCALATE", None),
+    ("OOS: data",              "data recovery kaise hogi",                   "ESCALATE", None),
+    ("OOS: warranty",          "warranty claim karna hai",                   "ESCALATE", None),
+    ("OOS: empty",             "",                                           None,       None),  # handled by API layer
 
     # ── No match — must escalate ─────────────────────────────────────────────
     ("NO-MATCH: random", "what is the weather today",        "ESCALATE", None),

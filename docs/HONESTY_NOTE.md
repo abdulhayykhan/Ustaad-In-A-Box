@@ -26,9 +26,9 @@ We placed 100% of the verdict-rendering authority in a **deterministic, transpar
 ## 2. Provenance of Rules & Transparent Baseline Status
 
 We explicitly disclose the status of our rule database (`rules.yaml`):
-1. **Rule Sourcing:** The 18 authored rules in `rules.yaml` are based on our structured diagnostic questionnaire and common repair heuristics from Saddar mobile market artisans.
-2. **Timestamp Verification:** Rules are currently tagged with `BASELINE EXPERT HEURISTIC` in the engine. They represent our pre-event operational triage baseline.
-3. **Purged Unverified Advice:** Early draft rules included common folk remedies (such as leaving a wet phone in rice for 24 hours, or blanket 2-year battery replacement rules). During safety reviews, we purged the rice drying advice because rice leaves starch dust and fails to pull moisture from under BGA shielding cans; we replaced it with proper triage: immediate power-off, silica gel desiccant, and professional isopropyl alcohol cleaning.
+1. **Rule Sourcing:** The 19 authored rules in `rules.yaml` are based on our structured diagnostic questionnaire and common repair heuristics from Saddar mobile market artisans.
+2. **Provenance Status:** Every rule is currently labeled with `DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)` in `rules.yaml`. They represent our pre-event operational triage baseline.
+3. **Purged Unverified Advice:** Early draft rules included common folk remedies and ungrounded assumptions (such as blanket 2-year battery replacement in `BAT-001`, strict 50% device cost thresholds in `REP-001`, claims of 24h screen blackout in `SCR-003`, or claims that rice starch ruins ports in `WAT-001`/`WAT-002`). During technical review, we purged unverified claims, softened cost heuristics, aligned battery advice with battery health percentage (< 80%) / rapid cycle drops, and clarified that rice is simply ineffective at extracting trapped moisture beneath BGA shielding cans.
 
 ---
 
@@ -44,24 +44,25 @@ Rather than presenting an artificial, spotless score, here is the transparent au
 | **4** | **Hairdryer Water Short Hazard** | *"Fell in water, dried with hairdryer, now charging"* | Returned `WAT-002` ("Theek kiya ke off hai"). | No compound rule existed for wet devices plugged into AC mains. | Authored `WAT-003` (`severity: safety_stop`, `verdict: ESCALATE`) warning of catastrophic board shorts. |
 | **5** | **Substring Collision on "fir"** | *"Phone fire pakad raha hai"* | Treated as `OUT_OF_SCOPE`! | Substring `"fir"` (intended for police FIR) matched inside `"fire"`. | Removed bare `"fir"`, added `"police fir"`, and added strict regex word boundaries (`\b`) to all out-of-scope terms. |
 | **6** | **Substring Collision on "rust"** | *"I am frustrated, my phone hangs"* | Fired leaking battery emergency stop! | Substring `"rust"` in `battery_leaking` matched inside `"frustrated"`. | Enforced word boundaries (`\b`) around all synonym dictionary entries. |
+| **7** | **Hazard Negations & Price Phrasing** | *"battery leak nahi hui"*, *"kitne ka aayega"* | Fired `BAT-004` on negated leak; price query matched screen rule. | Intrinsic symptom matching lacked clause-aware negation; Roman Urdu price idioms were absent from OOS. | Implemented clause-bounded regex negation window for `NEGATABLE_TAGS` (`battery_swollen`, `battery_leaking`, `overheating`, etc.) and expanded `OUT_OF_SCOPE_PHRASES` with Roman Urdu price queries. |
 
 ---
 
 ## 4. Current Empirical Verification Status
 
-All 6 probe cases above—alongside 40 standard vernacular queries covering Roman Urdu, Urdu script, and English—are now codified as permanent regression tests in `test_engine.py`:
+All 7 probe cases above—alongside 43 standard vernacular queries covering Roman Urdu, Urdu script, and English—are codified as permanent regression tests in `test_engine.py`:
 
 ```
 ============================================================
   Ustaad-in-a-Box — Rule Engine Test Suite
 ============================================================
-  46/46 passed  |  0 failed
+  50/50 passed  |  0 failed
 ============================================================
 All unit and adversarial safety tests passed. ✓
 ```
 
-### The 20-Query Review Sheet (`ustaad_review.csv`)
-The session log contains **20 distinct, verified interactions** exported directly from `interactions.jsonl`. This CSV sheet is provided on the judging table with columns `review_agree`, `review_disagree`, `review_should_have_escalated`, and `review_note` ready for physical bench annotations during the live evaluation.
+### Bench Probe Log (`ustaad_review.csv` & `interactions.jsonl`)
+The repository includes a live session log of bench probe interactions exported to `ustaad_review.csv`. **We explicitly disclose that the four review columns (`review_agree`, `review_disagree`, `review_should_have_escalated`, `review_note`) are currently empty.** They represent automated bench probes awaiting physical human technician evaluation at our expo booth table, rather than fabricated review scores.
 
 ---
 

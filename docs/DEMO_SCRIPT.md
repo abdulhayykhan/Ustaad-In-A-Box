@@ -23,7 +23,7 @@ Hand the microphone or screen to the judges and invite them to test these 10 sce
 
 | # | Question / Utterance | Input Method | System Verdict & Rule Fired | What Judges See on Screen | The Point Demonstrated |
 |---|---|---|---|---|---|
-| **1** | *"Mera phone charging pe bohot garam ho raha hai"* | Voice (PTT) | `ESCALATE` (Rule `CHG-002`) | Red Banner: 🚨 **ESCALATE**<br>Rule `CHG-002`: Overheating while charging.<br>Source: `Interview 1, 00:22:15` | Immediate safety-stop override. Warns against thermal runaway fire. |
+| **1** | *"Mera phone charging pe bohot garam ho raha hai"* | Voice (PTT) | `ESCALATE` (Rule `CHG-002`) | Red Banner: 🚨 **ESCALATE**<br>Rule `CHG-002`: Overheating while charging.<br>Source: `UNVERIFIED BASELINE (Pending Technician Interview)` | Immediate safety-stop override. Warns against thermal runaway fire. |
 | **2** | *"Battery pholi hui hai, phone use kar sakta hun?"* | Voice (PTT) | `ESCALATE` (Rule `BAT-003`) | Red Banner: 🚨 **SAFETY STOP**<br>Rule `BAT-003`: Swollen battery.<br>Reason: Exploding/puncturing risk. | Direct tie-in to Rocketathon battery safety rules. |
 | **3** | *"Phone paani mein gir gaya aur abhi on hai"* | Voice / Text | `ESCALATE` (Rule `WAT-001`) | Red Banner: 🚨 **ESCALATE**<br>Rule `WAT-001`: Water damage (on).<br>Advice: Power off immediately, do not charge. | Prevents motherboard BGA short-circuits. |
 | **4** | *"Phone bheeg gaya tha lekin main ne foran band kar diya tha"* | Voice / Text | `CAUTION` (Rule `WAT-002`) | Yellow Banner: ⚠️ **CAUTION**<br>Rule `WAT-002`: Water damage (off).<br>Advice: Keep off, desiccant dry 24h. | Differentiates nuanced risk based on power state. |

@@ -85,11 +85,11 @@ Every confirmed rule must follow this schema:
     Mujhse milne aao — swollen battery leak ya catch fire kar sakti hai.
   escalate: true                    # Boolean flag for escalation
   reason: "Swollen battery can leak, catch fire, or explode. Stop use immediately."
-  source: "Interview 1, 00:14:22"   # Mandatory timestamp in interview audio
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"   # Provenance source
 ```
 
 ### Rule Authoring Rules
-1. **Source Timestamp is Mandatory:** Never create a rule without an exact timestamp (`Interview X, HH:MM:SS`). If a rule cannot be traced to the recording, it cannot be added.
+1. **Source Tracking is Mandatory:** Never create a rule without declaring its provenance: either an exact interview recording timestamp (`Interview X, HH:MM:SS`) once the technician interview is recorded, or explicitly marked `DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)`. Never claim unverified heuristic rules have been verified by a technician.
 2. **`safety_stop` Forces Escalation:** Any rule marked `severity: safety_stop` must have `verdict: ESCALATE` and `escalate: true`.
 3. **Compound Conditions:** If a rule depends on two symptoms (e.g. wet AND still turned on), declare both in `when`:
    ```yaml

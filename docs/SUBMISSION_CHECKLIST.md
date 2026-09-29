@@ -11,9 +11,9 @@
 
 | # | Deliverable | Status | File Location | Key Content to Highlight to Judges |
 |---|---|---|---|---|
-| **01** | **Live Working Demo** | Ready & Running | Web UI: `http://localhost:8000` | 100% offline, Push-to-Talk, live transcription, deterministic rule resolution, Why-panel showing Rule ID and interview source timestamp. |
+| **01** | **Live Working Demo** | Ready & Running | Web UI: `http://localhost:8000` | 100% offline, Push-to-Talk, live transcription, deterministic rule resolution, Why-panel showing Rule ID and provenance. |
 | **02** | **Bill of Provenance** | Completed | [`docs/BILL_OF_PROVENANCE.md`](BILL_OF_PROVENANCE.md) | PKR 0.00 spent. Complete audit of salvaged 2017 Lenovo laptop, cracked Samsung phone, recycled transducer speaker, and open-source licenses. |
-| **03** | **One-Page Honesty Note** | Completed | [`docs/HONESTY_NOTE.md`](HONESTY_NOTE.md) | 30-answer technician review scorecard ($86.7\%$ agree), documented 4 edge cases with remediations, and Section 4.2 live bench test analysis. |
+| **03** | **One-Page Honesty Note** | Completed | [`docs/HONESTY_NOTE.md`](HONESTY_NOTE.md) | Transparent audit of pre-interview draft baseline heuristics, 7 engine bug discoveries with code diffs, bench probe logs, and system limits. |
 
 ---
 
@@ -33,13 +33,13 @@ Follow this setup order before the judges arrive at your booth:
    - Verify the screen immediately displays:
      - 🚨 **ESCALATE / SAFETY STOP**
      - Rule **`BAT-003`**
-     - Interview Source: `Interview 1, 00:14:22`
+     - Source: `DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)`
    - Click the "Why?" tab in the sidebar and ensure tags and reason populate cleanly.
 
 3. **Printed / Tablet Materials on Table:**
    - Keep a printout or tablet copy of [`BILL_OF_PROVENANCE.md`](BILL_OF_PROVENANCE.md).
    - Keep a printout or tablet copy of [`HONESTY_NOTE.md`](HONESTY_NOTE.md).
-   - Have the technician's signed consent form (or WhatsApp screenshot on phone) ready for inspection.
+   - Have the Rule Authoring Guide and Pre-Interview Baseline heuristic documentation ready for inspection.
 
 ---
 
@@ -51,7 +51,7 @@ Follow this setup order before the judges arrive at your booth:
 >
 > We cloned **Ustaad Bhai**, a mobile repair technician from Saddar. When a customer has a swollen lithium battery, water damage, or thermal runaway, wrong advice causes a house fire.
 >
-> Our system is built **100% from scrap hardware for PKR 0.00**. Its verdicts are computed by an **unyielding deterministic rule engine**—never an AI model's guess. Every answer displays the exact rule ID, the interview timestamp where he stated it, and our transparent honesty scorecard.
+> Our system is built **100% from scrap hardware for PKR 0.00**. Its verdicts are computed by an **unyielding deterministic rule engine**—never an AI model's guess. Every answer displays the exact rule ID, the rule provenance source, and our transparent honesty failure log.
 >
 > Here, please ask it any question about a damaged phone in Urdu, Roman Urdu, or English."*
 
@@ -86,4 +86,4 @@ Run these sequentially from [`docs/DEMO_SCRIPT.md`](DEMO_SCRIPT.md):
 | **Expo hall Wi-Fi blocks connections** | The app is 100% offline. Use the laptop screen directly at `http://localhost:8000`, or create an offline local hotspot from the laptop with no internet. |
 | **Microphone picks up loud hall announcements** | Switch seamlessly to typed input in the text box below the mic. The rule engine, "Why" panel, and verdict cards remain identical. |
 | **Accidental browser tab close** | Re-open browser and go to `http://localhost:8000`. The server is running as a daemon service in the background and preserves history. |
-| **Server process terminated** | Double click `run.bat` on the Desktop. It runs all 39 tests in 2 seconds and re-launches the server immediately. |
+| **Server process terminated** | Double click `run.bat` on the Desktop. It runs all 50 tests in 2 seconds and re-launches the server immediately. |

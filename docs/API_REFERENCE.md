@@ -5,6 +5,9 @@ The **Ustaad-in-a-Box** local backend exposes a lightweight, high-performance RE
 **Base URL:** `http://localhost:8000` (or `http://<HOST_IP>:8000`)  
 **Interactive Swagger Docs:** `http://localhost:8000/docs`
 
+> **Security & Network Design Note:**  
+> All endpoints are unauthenticated and CORS is explicitly configured with `allow_origins=["*"]` by design. This allows scrap phones and secondary kiosks to connect over a local ad-hoc Wi-Fi hotspot or LAN without requiring SSL certificates or authentication gateways. This API is intended strictly for local-network/offline kiosk operation.
+
 ---
 
 ## 1. Query & Decision Endpoints
@@ -31,7 +34,7 @@ Content-Type: application/json
   "answer": "Yaar, swollen battery serious cheez hai. Abhi charging band karo aur phone use karna bhi chhoro. Isko mat dabao, mat kholne ki koshish karo. Mujhse milne aao — swollen battery leak ya catch fire kar sakti hai.",
   "rule_id": "BAT-003",
   "rule_label": "Swollen battery",
-  "source": "Interview 1, 00:14:22",
+  "source": "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)",
   "escalation_reason": "Swollen battery can leak, catch fire, or explode. Stop use immediately.",
   "matched_tags": [
     "battery_swollen"
@@ -160,7 +163,7 @@ Dumps all loaded rules currently parsed in memory from `rules.yaml`.
     "say": "Yaar, swollen battery serious cheez hai...",
     "escalate": true,
     "reason": "Swollen battery can leak, catch fire, or explode. Stop use immediately.",
-    "source": "Interview 1, 00:14:22"
+    "source": "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
   }
 ]
 ```
