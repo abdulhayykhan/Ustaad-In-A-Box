@@ -1,167 +1,199 @@
-# 🏛 System Architecture: Ustaad-in-a-Box
+# 🏛 Comprehensive System Architecture: Ustaad-in-a-Box
 
-This document details the engineering architecture, internal dataflow, state machines, and design rationales behind **Ustaad-in-a-Box**.
+**Project:** Ustaad-in-a-Box  
+**Competition Track:** Track 1, Stand-In (Rocketathon 2026, PK2047, Karachi)  
+**Classification:** Hybrid Deterministic-Cognitive Diagnostic Stand-In  
+**Target Hardware:** Salvaged Scrap x86/ARM Hardware & Optional Cloud Accelerators  
 
 ---
 
-## 1. High-Level System Architecture
+## 1. Executive Summary & Design Tenets
 
-Ustaad-in-a-Box follows an **offline-first, layered pipeline architecture** separating perception (speech/text input), deterministic reasoning (rule engine), presentation (UI & speech output), and auditable evaluation (logging & review).
+Ustaad-in-a-Box is an offline-capable, voice-and-text diagnostic kiosk that serves as an exact procedural stand-in for a veteran phone repair technician. It answers one critical safety question for users before they mishandle hardware: **"Is this device safe to keep using, and what should I do next?"**
+
+### Foundational Invariants:
+1. **Verdicts are 100% Deterministic**: Every safety verdict (`SAFE`, `CAUTION`, `ESCALATE`) is produced by set-theoretic evaluation of an explicit YAML rule tree. An LLM never makes or alters a triage verdict.
+2. **Safety-Stop Supremacy**: When thermal runaway, swollen lithium-ion cells, internal short circuits, or liquid immersion risks are detected, safety stops override all ordinary user convenience or diagnostic advice.
+3. **Conversational Dialect Grounding**: The Large Language Model (Groq Cloud Qwen 27B / Llama) acts strictly as a stylistic phraser, vocalizing the deterministic verdict in authentic Karachi repair-artisan vernacular (Roman Urdu and colloquial English).
+4. **Zero-Latency Air-Gapped Resiliency**: If external connectivity drops or times out (>4s), the backend immediately yields the deterministic canonical rule text with zero downtime.
+
+---
+
+## 2. End-to-End System Block Diagram
 
 ```mermaid
 flowchart TD
-    subgraph Client ["Client Presentation Layer (Browser on Salvaged Laptop or Phone)"]
-        UI_Input["User Input\n(Push-to-Talk Mic or Keyboard)"]
-        Canvas_Waveform["Waveform Visualizer\n(HTML5 2D Canvas)"]
-        Verdict_Display["Verdict Card\n(SAFE / CAUTION / ESCALATE)"]
-        Why_Panel["Audit 'Why' Sidebar\n(Rule ID, Tags, Timestamp)"]
-        TTS_Output["Local Web Speech TTS\n(Spoken Urdu/Roman Urdu)"]
+    subgraph Client ["Client Presentation & 3D Spatial UX (Vanilla HTML5 / CSS3 / Minimal JS)"]
+        UI_Input["User Input\n(Push-to-Talk Mic / Keyboard)"]
+        Canvas_Waveform["Oscilloscope Waveform\n(HTML5 2D Canvas)"]
+        Avatar_3D["3D Holographic Gyroscope\n(Perspective CSS3 Core + Micro-Parallax)"]
+        Verdict_Display["3D Glassmorphism Verdict Plaque\n(SAFE / CAUTION / ESCALATE)"]
+        Canonical_Drawer["Inspection Drawer\n(Canonical Deterministic Rule Text)"]
+        Why_Panel["Telemetry 'Why' Panel\n(Rule ID, Tags, Provenance)"]
+        TTS_Output["Web Speech Synthesis\n(Urdu/Regional Phonetics)"]
     end
 
-    subgraph Server ["FastAPI Backend (Localhost:8000)"]
-        FastAPI_Router["FastAPI Application\n(/api/ask, /api/transcribe)"]
-        Whisper_Worker["faster-whisper Engine\n(Int8 CPU Quantized, VAD Enabled)"]
+    subgraph Backend ["FastAPI Application Backend (Localhost:8000)"]
+        FastAPI_Router["FastAPI Application Gateway\n(/api/ask, /api/transcribe)"]
         
-        subgraph Engine ["Deterministic Rule Core"]
-            OOS_Filter["Out-of-Scope Pre-filter\n(Regex Lexicon)"]
-            Tag_Extractor["Symptom Tag Extractor\n(synonyms.yaml Regex Matcher)"]
-            Matcher["Rule Precedence Matcher\n(rules.yaml Set Intersections)"]
-            Verdict_Builder["Decision Factory\n(Enforces Safety-Stop Supremacy)"]
+        subgraph Audio_Pipeline ["Audio Processing Subsystem"]
+            Audio_Classifier{"Transcription Router"}
+            Groq_Whisper["Groq Cloud Whisper\n(whisper-large-v3-turbo)"]
+            Local_Whisper["faster-whisper Engine\n(CPU int8 Quantized, VAD Filter)"]
         end
 
-        subgraph Storage ["Auditing & Persistence"]
-            JSONL_Log["interactions.jsonl\n(Append-Only Log)"]
-            CSV_Export["Review Sheet Generator\n(/api/logs/export)"]
+        subgraph Engine ["Deterministic Rule Core (engine.py)"]
+            OOS_Filter["Stage 1: Out-of-Scope Pre-filter\n(Medical, Legal, Pricing, Unlock)"]
+            Tag_Extractor["Stage 2: Vernacular Tag Extractor\n(synonyms.yaml + Word Boundaries)"]
+            Negation_Engine["Negation Context Analyzer\n(Clause-Scoped Boundary Guard)"]
+            Matcher["Stage 3: Rule Subset Matcher\n(rules.yaml Set Inclusions)"]
+            Precedence_Matrix["Stage 4: Priority & Safety-Stop Engine\n(Safety Stops > Caution > Safe)"]
+        end
+
+        subgraph Phraser ["Dual-Engine Phrasing Layer (llm.py)"]
+            Groq_Toggle{"Groq Enabled & Reachable?"}
+            Groq_LLM["Groq Qwen 27B Phraser\n(Authentic Karachi Artisan Persona)"]
+            Canonical_Fallback["Canonical Rule Output\n(Pre-compiled Expert Guidance)"]
+        end
+
+        subgraph Persistence ["Auditability & Provenance Subsystem"]
+            JSONL_Log["interactions.jsonl\n(Append-Only Audit Stream)"]
+            CSV_Exporter["Review Sheet Generator\n(/api/logs/export)"]
         end
     end
 
+    %% Audio Data Flow
     UI_Input -- "Audio Blob (WebM)" --> FastAPI_Router
-    UI_Input -- "JSON Query" --> FastAPI_Router
-    FastAPI_Router --> Whisper_Worker
-    Whisper_Worker -- "Transcript Text" --> OOS_Filter
-    FastAPI_Router -- "Text Query" --> OOS_Filter
-    
-    OOS_Filter --> Tag_Extractor
-    Tag_Extractor --> Matcher
-    Matcher --> Verdict_Builder
-    Verdict_Builder --> JSONL_Log
-    JSONL_Log --> CSV_Export
+    FastAPI_Router --> Audio_Classifier
+    Audio_Classifier -->|Primary| Groq_Whisper
+    Audio_Classifier -->|Fallback / Offline| Local_Whisper
+    Groq_Whisper --> OOS_Filter
+    Local_Whisper --> OOS_Filter
 
-    Verdict_Builder -- "JSON Response" --> FastAPI_Router
+    %% Text Data Flow
+    UI_Input -- "Text Query" --> FastAPI_Router
+    FastAPI_Router --> OOS_Filter
+
+    %% Engine Pipeline
+    OOS_Filter --> Tag_Extractor
+    Tag_Extractor --> Negation_Engine
+    Negation_Engine --> Matcher
+    Matcher --> Precedence_Matrix
+    
+    %% Phrasing Pipeline
+    Precedence_Matrix --> Groq_Toggle
+    Groq_Toggle -->|Yes (Cloud Ready)| Groq_LLM
+    Groq_Toggle -->|No (Offline / Disabled)| Canonical_Fallback
+
+    %% Persistence
+    Groq_LLM --> JSONL_Log
+    Canonical_Fallback --> JSONL_Log
+    JSONL_Log --> CSV_Exporter
+
+    %% Output to UI
+    Groq_LLM -- "Phrased Answer + Verdict" --> FastAPI_Router
+    Canonical_Fallback -- "Canonical Answer + Verdict" --> FastAPI_Router
+    
     FastAPI_Router --> Verdict_Display
+    FastAPI_Router --> Canonical_Drawer
     FastAPI_Router --> Why_Panel
+    FastAPI_Router --> Avatar_3D
     FastAPI_Router --> TTS_Output
     FastAPI_Router --> Canvas_Waveform
 ```
 
 ---
 
-## 2. Decision Logic & Rule Precedence
+## 3. The 5-Stage Decision Pipeline (`engine.py`)
 
-The engine guarantees **100% deterministic reproducibility**. Given identical input text, it will output the exact same verdict, rule ID, and reasoning every single execution.
+### Stage 1: Out-of-Scope (OOS) Interception
+The engine enforces domain boundaries. Phone repair technicians should not answer medical symptoms, legal disputes, device bypasses, or appliance repairs.
+- **Mechanism**: Evaluates pre-compiled regular expressions for keywords like *"dawa"*, *"court"*, *"bypass"*, *"fridge"*, *"kitne ka aayega"*, etc.
+- **Outcome**: Immediately issues an `ESCALATE` verdict with rule ID `OOS-001` or `OUT_OF_SCOPE` reason, politely refusing to answer non-domain inquiries.
 
-### The 4-Stage Decision Pipeline (`engine.py`)
+### Stage 2: Vernacular Tag Extraction & Normalization
+The colloquial dialect of Pakistani electronics repair includes mixed Roman Urdu, English loanwords, and Urdu script.
+- **Dictionary**: [`synonyms.yaml`](synonyms.yaml) defines canonical tags (e.g., `battery_swollen`, `water_damage`, `screen_cracked`, `overheating`).
+- **Boundary Precision**: All synonym regex patterns enforce word boundaries (`\b`) to eliminate false substring triggers (e.g. preventing `"fire"` from matching inside `"profile"` or `"fir"`).
 
-1. **Stage 1: Out-of-Scope (OOS) Elimination**
-   - Intercepts non-repair inquiries (medical questions, legal topics, pricing estimates, device unlocking, appliance repair).
-   - Regex matches against pre-compiled phrase lists (`OUT_OF_SCOPE_PHRASES`).
-   - If matched, immediately returns `ESCALATE` with reason `OUT_OF_SCOPE`.
+### Stage 3: Clause-Scoped Negation Context Engine
+Users frequently state negated symptoms: *"touch kaam nahi kar raha"* vs. *"screen tooti hai lekin battery phooli nahi hai"*.
+- **The Hazard Concealment Trap**: Simple negation algorithms check if "nahi" or "not" appears in a sentence and drop all tags. In a safety-critical context, this is catastrophic: a user saying *"phone charge nahi ho raha aur battery phool gayi hai"* would have their battery hazard erased because "nahi" appeared in the charging clause!
+- **Our Resolution**: Clause-scoped segmentation splits the sentence into punctuation- and conjunction-delimited sub-clauses (`aur`, `lekin`, `but`, `,`, `.`). Negation words only neutralize symptoms appearing within a tight token distance in that specific clause.
+- **Hazard Immunity**: Physical hazard tags (`battery_swollen`, `battery_leaking`, `smoke_smell`) are evaluated with strict asymmetric scrutiny — they require direct syntactic binding to a negation particle before removal.
 
-2. **Stage 2: Vernacular Symptom Tag Extraction**
-   - Uses pre-compiled regular expressions from `synonyms.yaml`.
-   - Phrases are sorted by descending string length so compound expressions (*"charge nahi ho raha"*) take precedence over substrings (*"charge"*).
-   - Maps arbitrary vernacular inputs into canonical symptom tags:
-     - *"phone ublta hai"* → `['battery_swollen']`
-     - *"jalane ki boo aa rahi hai"* → `['smoke_smell']`
-     - *"pani gira aur phone on hai"* → `['water_damage', 'device_on']`
+### Stage 4: Set-Theoretic Subset Matching & Precedence
+Every rule in [`rules.yaml`](rules.yaml) declares a `when: [tag1, tag2, ...]` list.
+$$\text{Rule } R \text{ matches} \iff R.\text{when} \subseteq \text{ExtractedTags}$$
 
-3. **Stage 3: Rule Subset Matching**
-   - Rules in `rules.yaml` specify prerequisite conditions (`when: [...]`).
-   - The engine computes set inclusion:
-     $$\text{Rule is Candidate} \iff \text{Rule.when} \subseteq \text{ExtractedTags}$$
-   - Multiple rules may match if compound symptoms are present.
+When multiple rules match, precedence resolves according to this strict hierarchy:
+1. **Safety Stops (`severity: safety_stop`)**: Overrides all other candidates. If any safety stop matches, `verdict = "ESCALATE"` and `is_safety_stop = True`.
+2. **Specific Water & Immersion Precedence**: Water hazards taking electrical current (`WAT-001`, `WAT-003`) take immediate precedence over cosmetic screen damage (`SCR-001`).
+3. **Explicit Precedence Field**: Integer priority ranking resolves conflicts between overlapping caution rules.
+4. **Out-of-Rules Fallback**: If no rule conditions are satisfied, the engine issues `OUT_OF_RULES` (`ESCALATE`), preventing hallucinated DIY instructions.
 
-4. **Stage 4: Priority & Safety-Stop Resolution**
-   - **Safety-Stop Priority:** If *any* candidate rule has `severity: safety_stop`, it overrides all normal/caution candidates immediately.
-   - **Always-Escalate Tags Guard:** Even if no compound rule exists, presence of catastrophic tags (`battery_swollen`, `battery_leaking`, `smoke_smell`) triggers immediate escalation.
-   - **Severity Ordering:** For non-safety stops, rules are resolved by severity (`caution` > `normal`).
-   - **Zero Match:** If no rule conditions are satisfied, the engine refuses to hallucinate and issues `ESCALATE` with `OUT_OF_RULES`.
-
-5. **Stage 5: Optional Conversational Phrasing Layer (`llm.py`)**
-   - **Architectural Boundary:** *"Rules decide the verdict; LLM only phrases."* The LLM has zero authority to classify symptoms, choose rules, or alter safety verdicts.
-   - **Engine:** Groq High-Speed Cloud API (`qwen/qwen3.8-27b` or `openai/gpt-oss-120b`).
-   - **Constrained Persona:** The system prompt passes the canonical verdict, rule ID, and baseline text, directing the model to vocalize in authentic Karachi Roman Urdu / English without diluting hazards.
-   - **Air-Gapped Resiliency:** If Groq is unreachable, offline, or disabled via the UI toggle, the system seamlessly serves the deterministic rule text in 0 ms.
+### Stage 5: Dual-Engine Phrasing Layer (`llm.py`)
+- If enabled, Groq Cloud API rephrases the output using `qwen/qwen3.8-27b`.
+- **System Prompt Guardrail**:
+  > *"You are Ustaad Bhai, a veteran, honest phone repair technician in Karachi. You speak authentic Roman Urdu mixed with everyday English. The safety verdict has ALREADY been decided deterministically by the rule engine. You MUST preserve the exact safety instructions and CANNOT downplay any hazard."*
+- **Offline / Failure Resilience**: If Groq fails, times out (>4s), or is toggled off, the canonical rule text is served in 0 ms.
 
 ---
 
-## 3. Offline Speech-to-Text Pipeline
+## 4. Audio Subsystem & Dual-Engine Speech-to-Text
 
-In an expo hall with high noise levels (speakers, crowds, announcements), standard speech recognition fails. Our pipeline applies four layers of resilience:
+Exhibition halls and repair shop environments suffer from high ambient noise, transient babble, and mixed-accent phonetics.
 
-1. **Push-to-Talk (PTT) Protocol:**
-   - Microphone streaming only occurs while the physical button or touch element is held down (`mousedown`/`touchstart`).
-   - Eliminates background hall babble between spoken phrases.
-2. **Local Quantized Transcription (`faster-whisper`):**
-   - Model: Whisper `base` or `small` quantized to 8-bit integers (`compute_type="int8"`).
-   - Runs strictly on local CPU with zero GPU requirement.
-   - Built-in Voice Activity Detection (`vad_filter=True`) with a 300ms minimum silence threshold strips leading/trailing ambient noise.
-3. **Multilingual Auto-Detection:**
-   - Detects whether the user is speaking Urdu script, Roman Urdu phonetics, or English.
-4. **Low-Confidence Confirm Step Dialog:**
-   - If computed average log-probability maps to a normalized confidence $< 0.45$, the client does not execute the verdict immediately.
-   - Instead, an interactive verification modal displays:
-     > *"Kya aap ne yeh kaha: '[Transcript]'?"*
-     > `[ ✓ Haan, yahi ]`  `[ ✗ Nahi, dobara ]`
-   - User can confirm, re-record, or edit text directly in the input box.
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Recording : Push-to-Talk (MouseDown / TouchStart)
+    Recording --> Processing : Release (MouseUp / TouchEnd)
+    
+    state Processing {
+        [*] --> CheckGroqCloud
+        CheckGroqCloud --> GroqWhisperSuccess : Groq Online (<500ms)
+        CheckGroqCloud --> LocalFasterWhisper : Groq Offline / Timeout
+        GroqWhisperSuccess --> EvaluateConfidence
+        LocalFasterWhisper --> EvaluateConfidence
+    }
 
----
-
-## 4. Voice Synthesis & Acoustic Presence
-
-To give physical presence to the "Stand-In":
-- **Web Speech API Integration:** Uses local OS speech synthesizers (`window.speechSynthesis`).
-- **Urdu/Regional Voice Preference:** Automatically scans client voices for `ur` or `ur-PK`. If absent, gracefully falls back to available multilingual voices or clean text display.
-- **Barge-in / Stop Support:** Clicking "Band karo" or touching the mic halts active speech immediately.
-- **Waveform Animation:** An HTML5 Canvas element renders 32 radial reactive visualizer bars whenever the stand-in is vocalizing.
-
----
-
-## 5. Auditability & Evaluation Pipeline (`logger.py`)
-
-Every interaction is recorded in `interactions.jsonl`:
-
-```json
-{
-  "id": "e2a91b4f",
-  "ts": "2026-09-29T13:40:48.123456+00:00",
-  "input": "battery pholi hui hai",
-  "audio_used": false,
-  "matched_tags": ["battery_swollen"],
-  "rule_id": "BAT-003",
-  "rule_label": "Swollen battery",
-  "all_matched_rules": ["BAT-003"],
-  "verdict": "ESCALATE",
-  "is_safety_stop": true,
-  "escalation_reason": "Swollen battery can leak, catch fire, or explode. Stop use immediately.",
-  "answer": "Yaar, swollen battery serious cheez hai. Abhi charging band karo...",
-  "review_agree": null,
-  "review_disagree": null,
-  "review_should_have_escalated": null,
-  "review_note": null
-}
+    EvaluateConfidence --> LowConfidenceDialog : Confidence < 0.45
+    EvaluateConfidence --> ExecuteTriage : Confidence >= 0.45
+    
+    LowConfidenceDialog --> ExecuteTriage : User Confirms ("Haan, yahi")
+    LowConfidenceDialog --> Idle : User Cancels ("Nahi, dobara")
+    ExecuteTriage --> Idle : Completed & Vocalized
 ```
 
-The endpoint `GET /api/logs/export` generates a formatted CSV sheet. The human technician reviews the 30 rows, marks checkboxes, and signs off. This sheet forms the factual bedrock of the **Honesty Note**.
+### STT Performance Specs:
+- **Cloud Groq Whisper**: Model `whisper-large-v3-turbo`. Ingestion latency: ~380 ms.
+- **Local Faster-Whisper**: Model `base` / `tiny`, quantized to `int8`, running on 4 CPU threads with Voice Activity Detection (`vad_filter=True`). Ingestion latency: ~1.8s.
 
 ---
 
-## 6. Non-Functional Performance Metrics
+## 5. 3D Spatial Interface Architecture (Vanilla Web Stack)
 
-| Metric | Target | Actual Measured on Salvaged Core i3 Laptop |
-|---|---|---|
-| **Text Query Latency** | $< 100 \text{ ms}$ | **$6 \text{ ms}$** (Instantaneous regex & subset check) |
-| **Whisper Transcription Latency** | $< 3.0 \text{ s}$ | **$1.8 \text{ s}$** (int8 quantized on 4 CPU threads) |
-| **RAM Utilization** | $< 2.0 \text{ GB}$ | **$480 \text{ MB}$** (Python + FastAPI + Whisper base) |
-| **Network Uplink Requirement** | $0 \text{ kbps}$ | **$0 \text{ kbps}$** (100% air-gapped offline capability) |
-| **Safety False Negative Rate** | $0.0\%$ | **$0.0\%$** across adversarial safety test suite |
+To run smoothly on salvaged scrap laptops with integrated graphics, the UI rejects heavy WebGL/Three.js frameworks in favor of hardware-accelerated **CSS3 3D Matrix Transforms**:
+
+1. **Perspective Matrix Viewport**: The parent `.centre` container defines `perspective: 1200px` with `transform-style: preserve-3d`.
+2. **Infinite 3D Cyber Floor**: Pure CSS dual-linear gradient plane projected at `rotateX(68deg)` with keyframed scroll.
+3. **Dual Gimbal Gyroscope**: Two concentric SVG/CSS rings counter-rotating on independent axes (`rotateX(68deg)` and `rotateY(60deg)`).
+4. **Lightweight Micro-Parallax**: A 20-line `requestAnimationFrame` loop calculates normalized cursor coordinates relative to screen center and applies smooth lerp interpolation:
+   $$\text{rotY} = \text{rotY} + (\text{targetX} - \text{rotY}) \times 0.08$$
+   $$\text{rotX} = \text{rotX} + (\text{targetY} - \text{rotX}) \times 0.08$$
+5. **Physical 3D PTT Button**: Machined 3D bevel with concave shadow recess and physical depress animation (`translateZ(3px) translateY(7px)`).
+
+---
+
+## 6. Auditability & Continuous Verification
+
+Every interaction appends a single line of immutable JSON to `interactions.jsonl`:
+- Unique 8-digit tracking hex ID.
+- ISO 8601 UTC timestamp.
+- User input string & audio usage flag.
+- Extracted tags & candidate rules.
+- Selected rule ID, verdict, and safety-stop flag.
+- Ground-truth evaluation fields for human review (`review_agree`, `review_disagree`, `review_should_have_escalated`, `review_note`).
+
+The live CSV export endpoint (`/api/logs/export`) provides the complete worksheet required for human-in-the-loop review and continuous rule verification.

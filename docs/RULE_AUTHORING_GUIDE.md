@@ -1,16 +1,16 @@
-# 🎙 Human Capture & Rule Authoring Guide
+# 🎙 Human Knowledge Capture & Rule Authoring Guide
 
-This guide establishes the standardized procedure for capturing the tacit knowledge of a real repair technician, obtaining valid written consent, and converting recorded interviews into auditable YAML rules for **Ustaad-in-a-Box**.
+This guide establishes the rigorous, standardized methodology for capturing the tacit diagnostic instincts of a veteran repair technician, obtaining ethical informed consent, formalizing vernacular Roman Urdu into YAML rule specifications, and verifying decisions against real-world hardware failure modes for **Ustaad-in-a-Box**.
 
 ---
 
 ## 1. Ethical Protocol & Technician Consent
 
-Rocketathon Track 1 rules require:
+Rocketathon 2026 Track 1 (Stand-In) explicitly mandates:
 > *"Pick your person first. A stand-in for one real, named person who has agreed to take part... Get their written agreement before you start. The stand-in never claims to be the technician; it identifies itself as his stand-in."*
 
 ### Standard Written Consent Form Template
-Print or transcribe this agreement on paper or send via WhatsApp/SMS to capture a photographic or digital record before recording:
+Print or transcribe this agreement on paper or send via WhatsApp/SMS to capture an immutable photographic or digital record before recording:
 
 ```text
 ========================================================================
@@ -40,91 +40,116 @@ Witness / Team Lead: ___________________________________________________
 
 ---
 
-## 2. The 3-Hour Semi-Structured Interview Script
+## 2. Standard Rule ID Taxonomy
 
-Conduct the interview at their workshop bench where they have physical tools and customer devices in hand. Record the audio with an explicit counter timer running.
+All diagnostic rules must adhere to the standardized prefix schema:
 
-### Module 1: Hard Safety Stops & Emergency Boundaries (45 mins)
-- *"What is the single most dangerous thing a customer does when their phone gets hot?"*
-- *"When a battery starts swelling (phoolna), what happens if they keep charging it?"*
-- *"What should a customer NEVER do if liquid spills on their device?"*
-- *"Have you ever had a power bank or battery catch fire or smoke in your shop? What triggered it?"*
-- *"What equipment do you refuse to open yourself without industrial safety gear?"*
-
-### Module 2: The Grey Zone — Caution vs Immediate Replacement (60 mins)
-- *"When is a cracked screen just cosmetic, and when is it dangerous or about to kill the display?"*
-- *"How can a customer tell the difference between a broken charging port and a bad cable at home?"*
-- *"If a phone battery drops from 50% to 10% in ten minutes, is it the battery cell or the motherboard power IC?"*
-- *"What are the common causes of laptop thermal throttling in Karachi summers?"*
-- *"What is your personal formula for 'Repair vs Replace' when a customer brings an old phone?"*
-
-### Module 3: Edge Cases, Clarifying Questions & Limits (45 mins)
-- *"If a customer asks you to unlock or bypass a pattern lock, what do you tell them?"*
-- *"What do you say when someone asks for medical advice about radiation or 5G?"*
-- *"When do you tell a customer: 'I cannot fix this, take it to the authorized distributor'?"*
-
-### Module 4: Speech Mannerisms, Greetings & Closings (30 mins)
-- Note their natural openings: *"Bhai jaan..."*, *"Yaar dekho..."*, *"Seedhi baat yeh hai..."*
-- Note how they explain technical components in Roman Urdu (*"IC garam ho rahi hai"*, *"Patta kat gaya"*).
+| Prefix | Domain | Severity Standard | Examples |
+|---|---|---|---|
+| `BAT-` | Battery Health & Chemical Hazards | `safety_stop` / `caution` | Swollen cells, punctures, rapid drain, thermal swelling |
+| `WAT-` | Liquid Immersion & Moisture | `safety_stop` / `caution` | Submerged while powered on, hair-dryer usage, corrosion |
+| `CHG-` | Charging Ports, Cables & Adapters | `safety_stop` / `caution` | Burning smell in port, overheating charger, loose pin |
+| `SCR-` | Display, Digitizer & Glass | `caution` / `normal` | Spiderweb hairline crack, touch unresponsive, purple ink bleed |
+| `DEV-` | Motherboard, Power IC & SoC | `safety_stop` / `caution` | Standby overheating, boot loops, sudden shutdown |
+| `LAP-` | Laptop Thermal & Fan Systems | `caution` / `normal` | Thermal throttling, blocked vents, dry thermal paste |
+| `PWR-` | Power Banks & External Batteries | `safety_stop` | Bulging casing, DIY tampering, extreme heat during charging |
+| `SMK-` | Combustion, Fumes & Arcing | `safety_stop` (Always ESCALATE) | Visible smoke, toxic acrid odor, popping electrical sparks |
+| `REP-` | Economic Repair vs. Replace | `normal` (SAFE / Advice) | Cost exceeds 50% device value, obsolete architecture |
+| `OOS-` | Out of Scope Inquiries | `ESCALATE` (Out-of-Scope) | Pricing negotiation, iCloud/IMEI bypass, medical advice |
 
 ---
 
-## 3. Authoring `rules.yaml`
+## 3. The 3-Hour Semi-Structured Interview Script
 
-Every confirmed rule must follow this schema:
+Conduct the interview at the technician's actual repair workbench. Keep physical tools, broken motherboards, and swollen battery packs on hand as tactile prompts.
+
+### Module 1: Hard Safety Stops & Fire Hazards (45 mins)
+- *"Jab battery phoolna shuru hoti hai, log aksar sochte hain back cover band ho jaye toh theek hai. Aap unhein kya samjhayenge?"*
+- *"Agar koi mobile paani mein gir jaye aur customer usko hairdryer se sukhaye ya charger laga de, toh motherboard pe kya hota hai?"*
+- *"Aap ne kabhi power bank ya phone phat te dekha hai shop pe? Aag lagne se pehle pehla sign kya hota hai?"*
+- *"Kaunse aese masle hain jinpe aap customer ko kehte hain ke phone ko haath bhi mat lagao aur foran shop le aao?"*
+
+### Module 2: The Grey Zone — Caution vs. Cosmetic (60 mins)
+- *"Agar screen pe sirf baal barabar crack ho lekin touch theek chal raha ho, toh kya customer usko chala sakta hai?"*
+- *"OLED screen pe purple ya black ink ka daagh fail raha ho, toh kya woh theek ho sakta hai ya poora panel badalna padega?"*
+- *"Agar phone charging pe lagaye baghair bhi standby pe garam ho raha ho, toh yeh battery ka masla hai ya charging IC short hai?"*
+- *"Karachi ki garmi mein laptops aksar band ho jaate hain. Fan saaf karne se kaam ban jata hai ya heat sink dry ho jata hai?"*
+
+### Module 3: Boundaries & Scope Enforcement (45 mins)
+- *"Agar koi aapse pattern lock ya iCloud bypass karwane aaye, aap unko kya jawab dete hain?"*
+- *"Phone repair ka estimate phone pe kyun nahi dena chahiye jab tak board physical inspect na ho?"*
+
+### Module 4: Dialect & Persona Nuances (30 mins)
+- Note natural conversational colloquialisms:
+  - *"Bhai jaan, seedhi baat yeh hai..."*
+  - *"IC garam ho rahi hai..."*
+  - *"Patta kat gaya hai display ka..."*
+  - *"Isko dabana mat, warna cell puncture ho jayega..."*
+
+---
+
+## 4. Authoring YAML Rules (`rules.yaml`)
+
+Every rule must conform to this schema in [`rules.yaml`](rules.yaml):
 
 ```yaml
-- id: BAT-003                       # Unique Category-Number code
-  label: "Swollen battery"          # Human readable descriptor
-  when: [battery_swollen]           # Array of symptom tags (AND logic)
-  severity: safety_stop             # safety_stop | caution | normal
-  verdict: ESCALATE                 # SAFE | CAUTION | ESCALATE
-  say: >                            # The technician's authentic spoken wording
+- id: BAT-003
+  label: "Swollen battery"
+  when: [battery_swollen]
+  severity: safety_stop
+  verdict: ESCALATE
+  safety_stop: true
+  say: >
     Yaar, swollen battery serious cheez hai. Abhi charging band karo aur
     phone use karna bhi chhoro. Isko mat dabao, mat kholne ki koshish karo.
     Mujhse milne aao — swollen battery leak ya catch fire kar sakti hai.
-  escalate: true                    # Boolean flag for escalation
+  escalate: true
   reason: "Swollen battery can leak, catch fire, or explode. Stop use immediately."
-  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"   # Provenance source
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
 ```
 
-### Rule Authoring Rules
-1. **Source Tracking is Mandatory:** Never create a rule without declaring its provenance: either an exact interview recording timestamp (`Interview X, HH:MM:SS`) once the technician interview is recorded, or explicitly marked `DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)`. Never claim unverified heuristic rules have been verified by a technician.
-2. **`safety_stop` Forces Escalation:** Any rule marked `severity: safety_stop` must have `verdict: ESCALATE` and `escalate: true`.
-3. **Compound Conditions:** If a rule depends on two symptoms (e.g. wet AND still turned on), declare both in `when`:
+### The 4 Non-Negotiable Authoring Laws:
+1. **The Provenance Mandate**: Never fabricate an interview timestamp! If the rule is a heuristic baseline waiting for the live interview recording, write:  
+   `source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"`.  
+   Once recorded, update to the exact tape counter: `Interview Tariq 2026-09-30, 00:14:22`.
+2. **`safety_stop` Forces Escalation**: Any rule where `safety_stop: true` MUST declare `severity: safety_stop`, `verdict: ESCALATE`, and `escalate: true`.
+3. **Compound Preconditions**: If a rule triggers only when two concurrent events occur (e.g. wet AND on), declare both in `when`:
    ```yaml
    when: [water_damage, device_on]
    ```
+4. **No Hallucinated DIY Advice**: Under no circumstance should a rule instruct an untrained customer to prick, compress, or submerge a damaged battery in rice.
 
 ---
 
-## 4. Expanding `synonyms.yaml`
+## 5. Expanding Synonyms & Dialect Mapping (`synonyms.yaml`)
 
-When adding vernacular phrases, follow these rules:
-1. **Lowercase Only:** Regex matching applies `re.IGNORECASE`, so write all entries in lowercase.
-2. **Include Common Transliterations:**
-   - Urdu speakers transcribe phonetic sounds differently in Roman Urdu:
-     - *"phoolna"*, *"phula"*, *"foola"*, *"pholi"*
-     - *"paani"*, *"pani"*
-     - *"dhuan"*, *"dhuwan"*, *"smoke"*
-3. **Avoid Overly Broad Single Words:** Do not use solitary generic words like `"on"`, `"and"`, or `"water"` as synonyms, because they cause false triggers in innocent phrases (e.g. `"water"` triggers on `"battery drains like water"`). Use phrases like `"pani gira"` or `"got wet"`.
+When adding colloquial terms:
+1. **Lowercase Everywhere**: Tag matching is case-insensitive.
+2. **Enforce Word Boundaries (`\b`)**: Never enter bare substrings that could collide with harmless words:
+   - ❌ Bad: `"fire"` (Matches `"firefox"`, `"bonfire"`, `"profile"`)
+   - ✅ Good: `"\bfire\b"`, `"\baag lag\b"`, `"\bjalne\b"`
+3. **Cover Transliteration Variants**:
+   - `phooli`, `pholi`, `phool gaya`, `bulging`, `swollen`, `sujan`
+   - `dhuwan`, `dhuan`, `smoke`, `smell`, `boo aa rahi`
+   - `screen toot`, `screen break`, `toota hua glass`
 
 ---
 
-## 5. Adding & Running Automated Regression Tests
+## 6. Verification & Automated Unit Testing
 
-Before any new rule is committed, add test cases to `test_engine.py`:
+Whenever a rule or synonym is touched, write at least two new unit tests in [`test_engine.py`](test_engine.py):
 
 ```python
-TESTS = [
-    # Format: (Description, Input Text, Expected Verdict, Expected Rule ID)
-    ("BAT-005 en: battery punctured", "my battery got punctured", "ESCALATE", "BAT-005"),
-    ("BAT-005 ro: battery soorakh",   "battery me soorakh ho gaya", "ESCALATE", "BAT-005"),
-]
+# In test_engine.py:
+TESTS.extend([
+    ("BAT-005 en: battery punctured", "my phone battery was punctured by a nail", "ESCALATE", "BAT-005"),
+    ("BAT-005 ro: battery me soorakh", "battery me soorakh ho gaya hai smell aa rahi", "ESCALATE", "BAT-005"),
+])
 ```
 
-Run the suite in your terminal:
+Execute the full test harness:
 ```bash
-python -X utf8 test_engine.py
+python test_engine.py
+python test_llm.py
 ```
-**All tests must pass (`0 failed`) before taking the system to the judging table.**
+**Zero test failures are permitted before deployment.**

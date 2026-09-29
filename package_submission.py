@@ -35,14 +35,18 @@ FILES_TO_PACKAGE = [
     # Evaluation & Data
     "ustaad_review.csv",
     "interactions.jsonl",
-    # Master Documentation
+    # Master Documentation & Legal
     "README.md",
+    "LICENSE",
+    "CONTRIBUTING.md",
     # Formal Deliverables
     "docs/BILL_OF_PROVENANCE.md",
     "docs/HONESTY_NOTE.md",
     "docs/ARCHITECTURE.md",
     "docs/RULE_AUTHORING_GUIDE.md",
     "docs/API_REFERENCE.md",
+    "docs/DEPLOYMENT_GUIDE.md",
+    "docs/HARDWARE_SALVAGE_SPEC.md",
     "docs/DEMO_SCRIPT.md",
     "docs/SUBMISSION_CHECKLIST.md",
 ]
