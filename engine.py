@@ -63,11 +63,16 @@ class RuleEngine:
         "overheating",
         "water_damage",
         "smoke_smell",
+        "device_on",
     }
 
-    NEGATION_BEFORE_RE = re.compile(r"\b(not|no|nahi|nhi|never)\b", re.IGNORECASE)
-    NEGATION_AFTER_RE = re.compile(r"\b(nahi|nhi|not|no)\b", re.IGNORECASE)
-    CLAUSE_BOUNDARY_RE = re.compile(r"[,;.\n]|(\b(but|lekin|magar|par|aur|and)\b)", re.IGNORECASE)
+    # Strict adjacent negation patterns (within 1-2 words). Fails safe:
+    ENG_PRE_NEG = re.compile(r"\b(not|no|never)\s+(?:too\s+|very\s+|really\s+)?$", re.IGNORECASE)
+    URDU_PRE_NEG = re.compile(r"\b(nahi|nhi|na)\s+(?:koi\s+|bhi\s+|itna\s+|zyada\s+)?$", re.IGNORECASE)
+    URDU_POST_NEG = re.compile(
+        r"^\s*(?:to|tou|bhi|bilkul)?\s*(?:nahi|nhi)\s*(?:hai|hui|hua|tha|thi)?(?:\s*[,;.\n]|\s*$|\s+(?:lekin|magar|par|aur|and|but)\b)",
+        re.IGNORECASE,
+    )
 
     # Topics explicitly outside scope — catch them before rule matching.
     OUT_OF_SCOPE_PHRASES: list[str] = [
@@ -76,8 +81,13 @@ class RuleEngine:
         "price", "kitna price", "kitne paise", "kitne ka aayega", "kitne ka",
         "kitnay ka aayega", "kitnay ka", "kitna kharcha", "kitna kharch",
         "kitna lagega", "kitne lagenge", "kitnay lagenge", "kitne ki",
-        "kitnay ki", "rate", "quote", "cost", "charges", "estimate",
-        "paise lagenge", "paisay lagenge", "warranty",
+        "kitnay ki", "paise lagenge", "paisay lagenge",
+        "repair rate", "kya rate hai", "rate kya hai", "rate batao",
+        "service charges", "repair charges", "kitne charges", "kya charges",
+        "repair cost", "kitni cost", "cost kitni", "how much does it cost",
+        "what is the cost", "how much will it cost", "how much to repair",
+        "price quote", "quotation", "cost estimate", "price estimate",
+        "warranty",
         "data recovery", "data wapas", "photos wapas", "files wapas",
         "unlock", "unlock karo", "bypass", "frp bypass", "pattern unlock",
         "microwave", "fridge", "refrigerator", "washing machine",
@@ -148,21 +158,21 @@ class RuleEngine:
 
     def _is_match_negated(self, text: str, start: int, end: int) -> bool:
         """
-        Check if a matched token span is syntactically negated in its local clause.
-        Restricted to clause boundaries (punctuation and conjunctions) to prevent cross-clause false positives.
+        Check if a matched token span is strictly and directly negated.
+        Requires direct adjacency (within 1-2 words). Fails safe: when in doubt,
+        does not suppress a hazard.
         """
-        # Look backwards up to 30 characters without crossing clause boundaries
-        pre_window = text[max(0, start - 30):start]
-        boundaries = [m.end() for m in self.CLAUSE_BOUNDARY_RE.finditer(pre_window)]
-        pre_segment = pre_window[max(boundaries):] if boundaries else pre_window
-        if self.NEGATION_BEFORE_RE.search(pre_segment):
+        # 1. Check preceding window (last 2-3 words, max 25 chars)
+        pre = text[max(0, start - 25):start]
+        clause_split = re.split(r"[,;.\n]|\b(but|lekin|magar|par|aur|and)\b", pre, flags=re.IGNORECASE)
+        pre_clause = clause_split[-1] if clause_split else pre
+        if self.ENG_PRE_NEG.search(pre_clause) or self.URDU_PRE_NEG.search(pre_clause):
             return True
 
-        # Look forwards up to 30 characters without crossing clause boundaries
-        post_window = text[end:min(len(text), end + 30)]
-        boundaries_post = [m.start() for m in self.CLAUSE_BOUNDARY_RE.finditer(post_window)]
-        post_segment = post_window[:min(boundaries_post)] if boundaries_post else post_window
-        if self.NEGATION_AFTER_RE.search(post_segment):
+        # 2. Check directly following window (Roman Urdu trailing negation, e.g. "leak nahi hui")
+        # Must not be followed by action verbs like 'chal', 'ho raha', 'on', etc.
+        post = text[end:min(len(text), end + 35)]
+        if self.URDU_POST_NEG.search(post):
             return True
 
         return False
@@ -197,6 +207,14 @@ class RuleEngine:
 
     def match_rules(self, tags: list[str], original_text: str = "") -> Decision:
         """Match tag list against rules. Returns Decision."""
+        # Check if an always-escalate hazard appeared anywhere in the raw text
+        raw_critical_hazard = False
+        for h_tag in self.ALWAYS_ESCALATE_TAGS:
+            pat = self._patterns.get(h_tag)
+            if pat and pat.search(original_text):
+                raw_critical_hazard = True
+                break
+
         if not tags:
             return self._no_match(original_text)
 
@@ -270,6 +288,28 @@ class RuleEngine:
             )
         )
         rule = matched[0]
+
+        # Critical Safety Invariant: NEVER let a non-hazard/normal rule answer
+        # a query that mentions critical battery/smoke hazard terms.
+        if raw_critical_hazard and rule.get("severity") == "normal":
+            return Decision(
+                verdict="ESCALATE",
+                answer=(
+                    "Aap ki query mein battery/smoke hazard ka zikr hai. "
+                    "Kisi bhi risk se bachne ke liye phone ko check karwaye bina normal use na karein — "
+                    "Ustaad Bhai ko physical inspection ke liye dikhana zaroori hai."
+                ),
+                rule_id=None,
+                rule_label=None,
+                source=None,
+                escalation_reason=(
+                    "SAFETY OVERRIDE: Query mentions critical hazard terms. "
+                    "Prohibiting benign normal verdict."
+                ),
+                matched_tags=list(tag_set),
+                is_safety_stop=True,
+                all_matched_rules=[r["id"] for r in matched],
+            )
 
         verdict = rule.get("verdict", "CAUTION")
         return Decision(

@@ -64,6 +64,12 @@ TESTS = [
     ("PROBE: frustrated not blocked by rust",   "I am frustrated, my phone hangs", "CAUTION", "DEV-001"),
     ("PROBE: battery leak negation",           "battery leak nahi hui",               "ESCALATE", None),
     ("PROBE: not hot not swollen negation",     "phone is not hot, not swollen",       "ESCALATE", None),
+    ("REGRESSION: swollen + not charging",      "battery swollen hai phone charge nahi ho raha", "ESCALATE", "BAT-003"),
+    ("REGRESSION: swollen not charging en",     "battery swollen not charging",        "ESCALATE", "BAT-003"),
+    ("REGRESSION: hot + not charging",          "phone garam ho gaya charge nahi ho raha", "CAUTION", "DEV-002"),
+    ("REGRESSION: wet + not working",           "phone paani mein gira nahi chal raha", "CAUTION", "WAT-002"),
+    ("REGRESSION: swollen + not turning on",    "battery phool gayi hai phone on nahi hota", "ESCALATE", "BAT-003"),
+    ("REGRESSION: drain rate false positive",   "Battery drain rate bohot high hai",   "CAUTION",  "BAT-001"),
 
     # ── Out-of-scope — must ALL be ESCALATE ─────────────────────────────────
     ("OOS: price",             "how much does it cost to repair",            "ESCALATE", None),

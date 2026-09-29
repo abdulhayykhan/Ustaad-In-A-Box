@@ -49,7 +49,7 @@ Follow this setup order before the judges arrive at your booth:
 >
 > Every other team here built a chatbot that claims to be a teacher or doctor. But in high-risk triage, a generative LLM that hallucinates is dangerous.
 >
-> We cloned **Ustaad Bhai**, a mobile repair technician from Saddar. When a customer has a swollen lithium battery, water damage, or thermal runaway, wrong advice causes a house fire.
+> We designed this stand-in for a phone repair technician using an authored baseline of unverified safety rules, with live technician review pending at our booth. When a customer has a swollen lithium battery, water damage, or thermal runaway, wrong advice causes a house fire.
 >
 > Our system is built **100% from scrap hardware for PKR 0.00**. Its verdicts are computed by an **unyielding deterministic rule engine**—never an AI model's guess. Every answer displays the exact rule ID, the rule provenance source, and our transparent honesty failure log.
 >
@@ -86,4 +86,4 @@ Run these sequentially from [`docs/DEMO_SCRIPT.md`](DEMO_SCRIPT.md):
 | **Expo hall Wi-Fi blocks connections** | The app is 100% offline. Use the laptop screen directly at `http://localhost:8000`, or create an offline local hotspot from the laptop with no internet. |
 | **Microphone picks up loud hall announcements** | Switch seamlessly to typed input in the text box below the mic. The rule engine, "Why" panel, and verdict cards remain identical. |
 | **Accidental browser tab close** | Re-open browser and go to `http://localhost:8000`. The server is running as a daemon service in the background and preserves history. |
-| **Server process terminated** | Double click `run.bat` on the Desktop. It runs all 50 tests in 2 seconds and re-launches the server immediately. |
+| **Server process terminated** | Double click `run.bat` on the Desktop. It runs all 56 tests in 2 seconds and re-launches the server immediately. |

@@ -3,7 +3,7 @@
 > **A deterministic voice-and-text stand-in for a phone repair technician, built entirely from scrap hardware and free software.**  
 > Developed for **Rocketathon 2026** (PK2047 · Expo Centre Karachi) — **Track 1: Stand-In**.
 
-[![Tests](https://img.shields.io/badge/tests-50%2F50%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-56%2F56%20passed-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)]()
 [![Python](https://img.shields.io/badge/python-3.10%20|%203.11%20|%203.12%20|%203.14-blue.svg)]()
 [![Offline](https://img.shields.io/badge/runtime-100%25%20offline-success.svg)]()
@@ -30,17 +30,17 @@
 Rocketathon Track 1 asks participants to build a **Stand-In**: *a machine that can hold a real person's place in a room*. The supreme judging question across all tracks is:
 > **"Does your system tell the truth about what it is doing, and what it is made of? A system that admits its limits beats a flashier one that hides them."**
 
-### Why "Ustaad Bhai" Beats Generic Clones
-Most hackathon teams attempt to clone a teacher, doctor, or pharmacist using a generic large language model (LLM) prompt. This suffers from three fatal flaws:
+### Why a Repair Stand-In Beats Generic Chatbots
+Most hackathon teams attempt to build a generic teacher, doctor, or pharmacist clone using an ungrounded large language model (LLM) prompt. This suffers from three fatal flaws:
 1. **Hallucination Risk:** Generative LLMs answer confidently even when wrong, which is catastrophic for high-risk advice.
 2. **Regulatory & Safety Hazards:** Real-world medical or legal advice violates event rules and poses severe liabilities.
-3. **No Grounded Provenance:** A cloud-based LLM lacks connection to a physical Karachi artisan or the event's e-waste ethos.
+3. **No Grounded Provenance:** A cloud-based LLM lacks connection to a physical craftsman or the event's e-waste ethos.
 
-**Ustaad-in-a-Box clones a real smartphone & electronics repair technician.**
+**Ustaad-in-a-Box is a stand-in architecture for a phone repair technician, running on an authored baseline of unverified draft rules while a formal technician interview and review remain pending.**
 - **Tactile, Hard Rules:** A swollen battery means *stop charging immediately*. Water damage with device on means *shut off power now*. Overheating during charging means *unplug*.
 - **Deterministic First, Generative Never for Verdicts:** The verdict is computed by strict rule-matching over explicit safety heuristics. An LLM (if enabled) only does language smoothing—it **never** decides whether a device is safe or dangerous.
 - **The "Why" Panel:** Every single response displays the exact rule ID triggered, the rule source provenance, and the escalation reason. If no rule matches, it admits ignorance (`OUT_OF_RULES`) rather than guessing.
-- **Ties directly into the Scrapyard theme:** The device itself is built from salvaged e-waste and speaks for the artisan whose livelihood is recycling and fixing e-waste.
+- **Ties directly into the Scrapyard theme:** The device itself is built from salvaged e-waste and is designed to represent the repair artisan whose trade keeps electronic scrap out of landfills.
 
 ---
 
@@ -95,7 +95,7 @@ Ustaad-In-A-Box/
 ├── synonyms.yaml          # Multi-lingual dictionary (Urdu / Roman Urdu / English)
 ├── logger.py              # JSONL interaction logger & CSV review sheet exporter
 ├── main.py                # FastAPI backend & audio transcription endpoint
-├── test_engine.py         # Automated test suite (50/50 passing)
+├── test_engine.py         # Automated test suite (56/56 passing)
 ├── requirements.txt       # Python dependencies (all free & open-source)
 ├── run.bat                # Windows 1-click startup batch script
 │
@@ -257,7 +257,7 @@ Unlike black-box AI prototypes that attempt to fake omniscient capability:
 
 - **Team Ustaad-in-a-Box** (Dawood University of Engineering & Technology)
 - Built for **Rocketathon 2026** · Powered by **The Rocket Guy Space** × **KYS Alkhidmat Karachi**
-- Dedicated to the neighborhood repair technicians of Saddar, Karachi, who keep Pakistan's electronics running without waste.
+- Dedicated to the neighborhood repair technicians who keep Pakistan's electronics running without waste.
 
 ---
 
@@ -265,26 +265,8 @@ Unlike black-box AI prototypes that attempt to fake omniscient capability:
 
 This project is open-source software licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
-```text
-MIT License
+---
 
-Copyright (c) 2026 Team Ustaad-in-a-Box (Dawood University of Engineering & Technology)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+**Rocketathon 2026 · PK2047 · Track 1: Stand-In**  
+*Team DUET · Dawood University of Engineering & Technology · Expo Centre Karachi*  
+*Powered by The Rocket Guy Space × KYS Alkhidmat Karachi*

@@ -9,11 +9,11 @@
 
 ## 1. The 30-Second Opening Hook
 
-> *"Judges, every other team today attempted to clone a doctor, professor, or lawyer by giving an LLM a prompt. When that LLM is asked a life-or-death question, it hallucinates with total confidence.*
+> *"Judges, every other team today attempted to build a chatbot that claims to be a doctor, professor, or lawyer using a generative prompt. When that LLM is asked a safety question, it hallucinates with total confidence.
 >
-> *We cloned **Ustaad Bhai**, a mobile repair technician from Saddar. When a customer brings a swollen battery or water-damaged phone, wrong advice means a lithium fire. Our machine does not guess. **The verdict is computed by an unyielding deterministic rule engine.**
+> We designed **Ustaad-in-a-Box** as a stand-in architecture for a phone repair technician. When a customer brings a swollen battery or water-damaged phone, wrong advice means a lithium fire. Our machine does not guess. **The verdict is computed by an unyielding deterministic rule engine running on an unverified baseline of safety heuristics, pending live technician review.**
 >
-> *Every answer shows the rule ID, the interview timestamp where he stated it, and our review scorecard—including where it failed. Here is how he holds his place in this room."*
+> Every answer displays the exact rule ID, the rule provenance status, and our transparent bug log showing every failure we caught and fixed on the bench. Here is how it operates."*
 
 ---
 

@@ -151,7 +151,7 @@
   say: >
     Battery jaldi khatam hoti hai? Pehle check karo kaunsa app zyada battery
     le raha hai — Settings > Battery mein. Background apps aur unnecessary location/Bluetooth
-    band karo. Agar battery health 80% se kam dikha raha hai ya phone achanak switch off
+    band karo. Agar battery percentage achanak tezi se gir rahi hai ya phone achanak switch off
     ho raha hai, toh cell degrade ho chuka hai aur replace karwana padega.
   escalate: false
   reason: null

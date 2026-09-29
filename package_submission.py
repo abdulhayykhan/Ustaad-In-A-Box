@@ -58,7 +58,8 @@ def main():
     print("  Ustaad-in-a-Box — Packaging Final Submission")
     print("=" * 60 + "\n")
 
-    # Ensure export directory exists
+    # Ensure export directory is clean
+    shutil.rmtree(EXPORT_DIR, ignore_errors=True)
     EXPORT_DIR.mkdir(parents=True, exist_ok=True)
 
     manifest_lines = [
@@ -75,6 +76,8 @@ def main():
     copied_files = []
 
     for rel_path in FILES_TO_PACKAGE:
+        if "__pycache__" in rel_path or rel_path.endswith(".pyc"):
+            continue
         src = ROOT / rel_path
         if not src.exists():
             print(f"  [!] Missing file: {rel_path}")
@@ -99,6 +102,8 @@ def main():
     print(f"\nCreating ZIP archive: {OUTPUT_ZIP.name} ...")
     with zipfile.ZipFile(OUTPUT_ZIP, "w", zipfile.ZIP_DEFLATED) as z:
         for disk_path, arc_name in copied_files:
+            if "__pycache__" in arc_name or arc_name.endswith(".pyc"):
+                continue
             z.write(disk_path, arcname=f"ustaad_in_a_box/{arc_name}")
 
     zip_size_kb = OUTPUT_ZIP.stat().st_size / 1024
