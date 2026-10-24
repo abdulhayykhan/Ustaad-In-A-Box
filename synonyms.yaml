@@ -37,6 +37,9 @@ battery_swollen:
   - cover utha
   - back utha
   - back khul
+  - بیٹری پھول
+  - پھول گئی
+  - بیٹری پھولی
 
 battery_drain:
   - battery drain
@@ -100,6 +103,8 @@ smoke_smell:
   - kuch jal
   - boo ati
   - boo arahi
+  - دھواں
+  - آگ
 
 water_damage:
   - pani gira
@@ -140,6 +145,21 @@ water_damage:
   - sukha ke
   - toilet
   - sink
+  - paani gaya
+  - pani gaya
+  - paani chala gaya
+  - pani chala gaya
+  - paani andar
+  - wet hai
+  - phone wet
+  - is wet
+  - got soaked
+  - spilled
+  - spill
+  - chai gira
+  - paani gir gaya
+  - پانی میں گر
+  - پانی گر
 
 device_on:
   - on hai
@@ -151,6 +171,12 @@ device_on:
   - still on
   - abhi on
   - powered on
+  - is on
+  - is still on
+  - and on
+  - abhi chal
+  - on hai abhi
+  - اب بھی آن
 
 overheating:
   - garam
@@ -233,6 +259,12 @@ touch_working:
   - but touch
   - screen touch hai
   - touch theek
+  - touch is working
+  - touch works
+  - touch bilkul theek
+  - touch theek chal
+  - touch is fine
+  - but touch works
 
 touch_broken:
   - touch nahi
@@ -246,6 +278,10 @@ touch_broken:
   - touch nahi ata
   - touch not working
   - screen not working
+  - touch stopped
+  - touch stopped working
+  - touch not responding
+  - touch response nahi
 
 slow_device:
   - slow
@@ -318,3 +354,19 @@ screen_ink_bleed:
   - rang nikal
   - ink nikal
 
+
+# Electric shock / mains leakage — added after bench probe found 'shock lag raha hai' was matched as a slow device
+electric_shock:
+  - electric shock
+  - shock lag
+  - shock laga
+  - shock lagta
+  - current lag
+  - current laga
+  - jhatka
+  - karant
+  - shocked me
+  - got a shock
+  - shock
+  - بجلی کا جھٹکا
+  - کرنٹ

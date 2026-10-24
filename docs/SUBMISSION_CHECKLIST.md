@@ -11,9 +11,9 @@
 
 | # | Deliverable | Status | File Location | Key Content to Highlight to Judges |
 |---|---|---|---|---|
-| **01** | **Live Working Demo** | Ready & Running | Web UI: `http://localhost:8000` | 100% offline, Push-to-Talk, live transcription, deterministic rule resolution, Why-panel showing Rule ID and provenance. |
-| **02** | **Bill of Provenance** | Completed | [`docs/BILL_OF_PROVENANCE.md`](BILL_OF_PROVENANCE.md) | PKR 0.00 spent. Complete audit of salvaged 2017 Lenovo laptop, cracked Samsung phone, recycled transducer speaker, and open-source licenses. |
-| **03** | **One-Page Honesty Note** | Completed | [`docs/HONESTY_NOTE.md`](HONESTY_NOTE.md) | Transparent audit of pre-interview draft baseline heuristics, 7 engine bug discoveries with code diffs, bench probe logs, and system limits. |
+| **01** | **Live Working Demo** | Ready & Running | Web UI: `http://localhost:8000` | works offline (core features), Push-to-Talk, live transcription, deterministic rule resolution, Why-panel showing Rule ID and provenance. |
+| **02** | **Bill of Provenance** | Complete | [`docs/BILL_OF_PROVENANCE.md`](BILL_OF_PROVENANCE.md) | What the Bill of Provenance states (including parts whose origin is "not recorded"), plus open-source licences. |
+| **03** | **One-Page Honesty Note** | Complete | [`docs/HONESTY_NOTE.md`](HONESTY_NOTE.md) | Transparent audit of pre-interview draft baseline heuristics, bug log, bench probe logs, and system limits. |
 
 ---
 
@@ -23,7 +23,7 @@ Follow this setup order before the judges arrive at your booth:
 
 1. **Hardware Placement:**
    - **Brain:** Place the salvaged laptop open or flat behind your display area, plugged into AC power (do not rely on failing internal batteries).
-   - **Face (Stand-In Display):** Prop the salvaged Samsung smartphone against the cardboard mount facing the audience. 
+   - **Face (Stand-In Display):** Place the display facing the audience. 
    - **Network Setup:** If connecting the phone wirelessly, enable the laptop's mobile hotspot (no internet required). On the phone's browser, open `http://<LAPTOP_LOCAL_IP>:8000`.
    - **Audio:** Plug in the salvaged speaker and test audio levels. Set volume to ~80% so speech is audible over hall noise without clipping.
 
@@ -51,7 +51,7 @@ Follow this setup order before the judges arrive at your booth:
 >
 > We designed this stand-in for a phone repair technician using an authored baseline of unverified safety rules, with live technician review pending at our booth. When a customer has a swollen lithium battery, water damage, or thermal runaway, wrong advice causes a house fire.
 >
-> Our system is built **100% from scrap hardware for PKR 0.00**. Its verdicts are computed by an **unyielding deterministic rule engine**—never an AI model's guess. Every answer displays the exact rule ID, the rule provenance source, and our transparent honesty failure log.
+> Our hardware is salvaged (see our Bill of Provenance). Its verdicts are computed by a deterministic rule engine, never an AI model's guess. Every answer displays the exact rule ID, the rule provenance source, and our transparent honesty failure log.
 >
 > Here, please ask it any question about a damaged phone in Urdu, Roman Urdu, or English."*
 
@@ -72,7 +72,7 @@ Run these sequentially from [`docs/DEMO_SCRIPT.md`](DEMO_SCRIPT.md):
    - Shows: `WAT-002` (`CAUTION`), Instructs keeping power off and desiccant drying.
 4. **General Screen Triage:**
    - Input: *"screen toot gyi hai mobile ki"*
-   - Shows: `SCR-000` (`CAUTION`), Checks touch state before recommending replacement.
+   - Shows: `SCR-000` (`CAUTION`); checks touch state before recommending replacement.
 5. **Knowing Its Limits (Out of Scope / Zero Match):**
    - Input: *"can you unlock pattern lock"* or *"fridge repair kardo"*
    - Shows: `OUT_OF_SCOPE` or `OUT_OF_RULES` (`ESCALATE`), Transparently admits limits.
@@ -83,7 +83,7 @@ Run these sequentially from [`docs/DEMO_SCRIPT.md`](DEMO_SCRIPT.md):
 
 | Failure Mode | Immediate Emergency Fix |
 |---|---|
-| **Expo hall Wi-Fi blocks connections** | The app is 100% offline. Use the laptop screen directly at `http://localhost:8000`, or create an offline local hotspot from the laptop with no internet. |
+| **Expo hall Wi-Fi blocks connections** | Core features work offline; Groq features need internet. Use the laptop screen directly at `http://localhost:8000`, or create an offline local hotspot from the laptop with no internet. |
 | **Microphone picks up loud hall announcements** | Switch seamlessly to typed input in the text box below the mic. The rule engine, "Why" panel, and verdict cards remain identical. |
 | **Accidental browser tab close** | Re-open browser and go to `http://localhost:8000`. The server is running as a daemon service in the background and preserves history. |
-| **Server process terminated** | Double click `run.bat` on the Desktop. It runs all 56 tests in 2 seconds and re-launches the server immediately. |
+| **Server process terminated** | Double click `run.bat` on the Desktop. It runs the engine tests and re-launches the server immediately. |

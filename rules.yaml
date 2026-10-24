@@ -270,3 +270,17 @@
   escalate: false
   reason: null
   source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
+
+- id: SHK-001
+  label: "Electric shock from device or charger"
+  when: [electric_shock]
+  severity: safety_stop
+  verdict: ESCALATE
+  say: >
+    Agar phone ya charger se shock lag raha hai toh foran charger socket se nikalo
+    aur phone ko haath mat lagao jab tak charger alag na ho. Is charger ya phone ko
+    dobara use mat karo. Gilay haath se kuch mat chhuo aur shop pe check karwao.
+  escalate: true
+  reason: "Electric shock indicates a possible mains leakage or insulation fault; stop use and unplug."
+  source: "DRAFT RULE — UNVERIFIED BASELINE (Pending Technician Interview)"
+

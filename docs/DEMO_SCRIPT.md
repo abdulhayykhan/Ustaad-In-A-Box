@@ -26,7 +26,7 @@ Hand the microphone or screen to the judges and invite them to test these 10 sce
 | **1** | *"Mera phone charging pe bohot garam ho raha hai"* | Voice (PTT) | `ESCALATE` (Rule `CHG-002`) | Red Banner: 🚨 **ESCALATE**<br>Rule `CHG-002`: Overheating while charging.<br>Source: `UNVERIFIED BASELINE (Pending Technician Interview)` | Immediate safety-stop override. Warns against thermal runaway fire. |
 | **2** | *"Battery pholi hui hai, phone use kar sakta hun?"* | Voice (PTT) | `ESCALATE` (Rule `BAT-003`) | Red Banner: 🚨 **SAFETY STOP**<br>Rule `BAT-003`: Swollen battery.<br>Reason: Exploding/puncturing risk. | Direct tie-in to Rocketathon battery safety rules. |
 | **3** | *"Phone paani mein gir gaya aur abhi on hai"* | Voice / Text | `ESCALATE` (Rule `WAT-001`) | Red Banner: 🚨 **ESCALATE**<br>Rule `WAT-001`: Water damage (on).<br>Advice: Power off immediately, do not charge. | Prevents motherboard BGA short-circuits. |
-| **4** | *"Phone bheeg gaya tha lekin main ne foran band kar diya tha"* | Voice / Text | `CAUTION` (Rule `WAT-002`) | Yellow Banner: ⚠️ **CAUTION**<br>Rule `WAT-002`: Water damage (off).<br>Advice: Keep off, desiccant dry 24h. | Differentiates nuanced risk based on power state. |
+| **4** | *"Phone bheeg gaya tha lekin main ne foran band kar diya tha"* | Voice / Text | `CAUTION` (Rule `WAT-002`) | Yellow Banner: ⚠️ **CAUTION**<br>Rule `WAT-002`: Water damage (off).<br>Advice: Keep off, air dry, bring in for inspection. | Differentiates nuanced risk based on power state. |
 | **5** | *"Screen toot gayi hai lekin touch bilkul theek chal raha hai"* | Voice / Text | `SAFE` (Rule `SCR-001`) | Green Banner: ✅ **SAFE**<br>Rule `SCR-001`: Cracked glass, touch ok.<br>Advice: Apply tempered glass, avoid further drops. | Practical, cost-saving triage: avoids unnecessary screen replacements. |
 | **6** | *"Display cracked and touch stopped working completely"* | Text (English) | `CAUTION` (Rule `SCR-002`) | Yellow Banner: ⚠️ **CAUTION**<br>Rule `SCR-002`: Screen & digitizer destroyed.<br>Advice: Digitizer replacement needed. | Identifies structural digitizer failure. |
 | **7** | *"Battery drains in two hours even on standby"* | Text / Voice | `CAUTION` (Rule `BAT-001`) | Yellow Banner: ⚠️ **CAUTION**<br>Rule `BAT-001`: Fast battery drain.<br>Advice: Check battery health & background apps. | Routine diagnosis with clear next steps. |
@@ -52,13 +52,13 @@ To prove how the system handles the noisy Expo hall environment:
 ## 4. Handling Hard Judge Questions
 
 ### Q1: "Why didn't you just write a prompt for Claude or GPT-4?"
-> *"Because in a mobile repair shop, hallucinations are fire hazards. If an LLM tells a customer with a swollen battery 'Try charging it overnight to see if it holds power', a lithium fire can burn down their house. By using a deterministic rule engine, our safety rules have a 0% failure rate. The LLM's only role in our architecture is vernacular phrasing—it never touches the verdict."*
+> *"Because in a mobile repair shop, hallucinations are fire hazards. If an LLM tells a customer with a swollen battery 'Try charging it overnight to see if it holds power', a lithium fire can burn down their house. By using a deterministic rule engine, the verdict can never be changed by the language model. The LLM's only role in our architecture is vernacular phrasing—it never touches the verdict."*
 
 ### Q2: "Did you spend any money on this build?"
-> *"PKR 0.00. The laptop running the brain was salvaged from a cracked-hinge discard. The display 'face' is an old Samsung phone from a repair shop scrap drawer. All software runs on local open-source libraries. Please inspect our [Bill of Provenance](BILL_OF_PROVENANCE.md)."*
+> *"Our parts and what we spent are listed one by one in our Bill of Provenance, with what each was before and where it goes after."*
 
 ### Q3: "What if a user asks something your technician never talked about?"
-> *"It says: 'Yeh masla mere scope mein nahi aaya—seedha Ustaad Bhai se milna.' Most AI products fake answers to look smart. Our product is designed to score 100% on knowing its limits."*
+> *"It says: 'Yeh masla mere scope mein nahi aaya—seedha Ustaad Bhai se milna.' Most AI products fake answers to look smart. Our product is designed to admit its limits."*
 
 ### Q4: "Where are your failure metrics?"
-> *"In our [Honesty Note](HONESTY_NOTE.md). In our 30-answer evaluation with the real technician, he agreed with 26, disagreed with 1, and flagged 3 that should have escalated earlier. We have documented all 4 failures on paper, along with the corrective rules we authored to fix them."*
+> *"In our Honesty Note. No technician has reviewed our rules yet, so we cannot give an accuracy number and we will not invent one. What we have is a bug log of real failures we found and fixed, such as the shock case being read as a slow phone, and 64 regression tests. The review sheet is ready for a technician."*

@@ -17,6 +17,15 @@ engine = RuleEngine()
 # expected_rule_id=None means any verdict is acceptable (used for no-match tests)
 
 TESTS = [
+    # ── Added after the honesty-note review (gaps found by bench probing) ───
+    ("SHK-001 ro: shock lag raha",              "charger se phone ko shock lag raha hai", "ESCALATE", "SHK-001"),
+    ("SHK-001 en: electric shock",              "I got an electric shock from my phone charger", "ESCALATE", "SHK-001"),
+    ("WAT-003 ro: wet + charging",              "mera phone wet hai aur charging pe laga diya", "ESCALATE", "WAT-003"),
+    ("WAT-001 en: fell in water and is on",     "phone fell in water and is on",       "ESCALATE", "WAT-001"),
+    ("WAT-003 ro: paani in charging port (over-escalates; documented)", "charging port mein paani gaya", "ESCALATE", "WAT-003"),
+    ("SCR-002 en: touch stopped working",       "Display cracked and touch stopped working completely", "CAUTION", "SCR-002"),
+    ("BAT-003 ur script: swollen",              "فون کی بیٹری پھول گئی ہے",            "ESCALATE", "BAT-003"),
+    ("SCR-001 en: cracked, touch works",        "screen is cracked but touch works",   None,       None),
     # ── Safety stops — must ALL be ESCALATE ──────────────────────────────────
     ("BAT-003 en: swollen battery",            "my battery is swollen",              "ESCALATE", "BAT-003"),
     ("BAT-003 ro: pholi battery",              "battery pholi hui hai",               "ESCALATE", "BAT-003"),

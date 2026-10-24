@@ -15,7 +15,7 @@ Ustaad-in-a-Box is an offline-capable, voice-and-text diagnostic kiosk that serv
 1. **Verdicts are 100% Deterministic**: Every safety verdict (`SAFE`, `CAUTION`, `ESCALATE`) is produced by set-theoretic evaluation of an explicit YAML rule tree. An LLM never makes or alters a triage verdict.
 2. **Safety-Stop Supremacy**: When thermal runaway, swollen lithium-ion cells, internal short circuits, or liquid immersion risks are detected, safety stops override all ordinary user convenience or diagnostic advice.
 3. **Conversational Dialect Grounding**: The Large Language Model (Groq Cloud Qwen 27B / Llama) acts strictly as a stylistic phraser, vocalizing the deterministic verdict in authentic Karachi repair-artisan vernacular (Roman Urdu and colloquial English).
-4. **Zero-Latency Air-Gapped Resiliency**: If external connectivity drops or times out (>4s), the backend immediately yields the deterministic canonical rule text with zero downtime.
+4. **Offline Fallback**: If external connectivity drops or times out (>4s), the backend immediately yields the deterministic canonical rule text with zero downtime.
 
 ---
 
@@ -52,7 +52,7 @@ flowchart TD
 
         subgraph Phraser ["Dual-Engine Phrasing Layer (llm.py)"]
             Groq_Toggle{"Groq Enabled & Reachable?"}
-            Groq_LLM["Groq Qwen 27B Phraser\n(Authentic Karachi Artisan Persona)"]
+            Groq_LLM["Groq Qwen3 32B Phraser (optional)\n(Authentic Karachi Artisan Persona)"]
             Canonical_Fallback["Canonical Rule Output\n(Pre-compiled Expert Guidance)"]
         end
 
@@ -133,7 +133,7 @@ When multiple rules match, precedence resolves according to this strict hierarch
 4. **Out-of-Rules Fallback**: If no rule conditions are satisfied, the engine issues `OUT_OF_RULES` (`ESCALATE`), preventing hallucinated DIY instructions.
 
 ### Stage 5: Dual-Engine Phrasing Layer (`llm.py`)
-- If enabled, Groq Cloud API rephrases the output using `qwen/qwen3.8-27b`.
+- If enabled, Groq Cloud API rephrases the output using `qwen/qwen3-32b`.
 - **System Prompt Guardrail**:
   > *"You are Ustaad Bhai, a veteran, honest phone repair technician in Karachi. You speak authentic Roman Urdu mixed with everyday English. The safety verdict has ALREADY been decided deterministically by the rule engine. You MUST preserve the exact safety instructions and CANNOT downplay any hazard."*
 - **Offline / Failure Resilience**: If Groq fails, times out (>4s), or is toggled off, the canonical rule text is served in 0 ms.
@@ -152,7 +152,7 @@ stateDiagram-v2
     
     state Processing {
         [*] --> CheckGroqCloud
-        CheckGroqCloud --> GroqWhisperSuccess : Groq Online (<500ms)
+        CheckGroqCloud --> GroqWhisperSuccess : Groq Online (typically fast; not benchmarked)
         CheckGroqCloud --> LocalFasterWhisper : Groq Offline / Timeout
         GroqWhisperSuccess --> EvaluateConfidence
         LocalFasterWhisper --> EvaluateConfidence

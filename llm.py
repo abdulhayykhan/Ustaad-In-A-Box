@@ -53,7 +53,7 @@ class GroqPhraser:
     Rephrases deterministic rule verdicts in Ustaad Bhai's authentic persona.
     """
 
-    DEFAULT_MODEL = "qwen/qwen3.8-27b"
+    DEFAULT_MODEL = "qwen/qwen3-32b"  # verify against console.groq.com/docs/models
     FALLBACK_MODEL = "openai/gpt-oss-120b"
     API_URL = "https://api.groq.com/openai/v1/chat/completions"
     TRANSCRIPTION_URL = "https://api.groq.com/openai/v1/audio/transcriptions"
@@ -121,8 +121,10 @@ class GroqPhraser:
                 choices = data.get("choices", [])
                 if choices:
                     content = choices[0].get("message", {}).get("content", "").strip()
-                    if content:
+                    if content and self._passes_guard(content, decision):
                         return content, f"groq:{self.model}"
+                    if content:
+                        logger.warning("LLM output failed safety guard: using canonical rule text")
         except urllib.error.HTTPError as http_err:
             logger.warning(f"Groq API HTTP Error ({http_err.code}): falling back to rule text")
         except Exception as exc:
@@ -130,6 +132,21 @@ class GroqPhraser:
 
         # Zero-failure fallback: return exact canonical deterministic answer
         return decision.answer, "deterministic_rule_engine"
+
+    # Words that must NOT appear in a phrasing of an ESCALATE verdict, and at least one
+    # of these must appear. This is a coarse post-check, not a proof of safety.
+    _FORBIDDEN_FOR_ESCALATE = ("it is safe", "is safe to use", "no problem", "koi masla nahi", "fikar mat karo", "use kar sakte ho", "safe hai")
+    _REQUIRED_FOR_ESCALATE = ("band", "off", "mat ", "stop", "unplug", "nikal", "shop", "dukaan", "ustaad", "inspect", "check")
+
+    def _passes_guard(self, text: str, decision: Decision) -> bool:
+        """Coarse output check: an ESCALATE answer may not sound reassuring and must
+        contain at least one action word. Falls back to canonical text otherwise."""
+        if decision.verdict != "ESCALATE":
+            return True
+        low = text.lower()
+        if any(f in low for f in self._FORBIDDEN_FOR_ESCALATE):
+            return False
+        return any(r in low for r in self._REQUIRED_FOR_ESCALATE)
 
     def _build_system_prompt(self, decision: Decision) -> str:
         """Construct system instructions enforcing strict alignment with rule verdict."""
@@ -176,7 +193,7 @@ class GroqPhraser:
         filename: str = "audio.webm",
     ) -> Optional[dict]:
         """
-        Transcribe audio using Groq's ultra-fast Whisper cloud endpoint.
+        Transcribe audio using Groq's Whisper cloud endpoint.
         Returns dict with keys: transcript, language, confidence, or None on failure.
         """
         if not self.is_available():

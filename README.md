@@ -8,13 +8,13 @@ Developed for **Rocketathon 2026** (PK2047 · Expo Centre Karachi) · **Track 1:
 ---
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Unit%20Tests-56%2F56%20Passed-brightgreen?style=for-the-badge&logo=pytest" alt="Rule Tests" />
-  <img src="https://img.shields.io/badge/LLM%20Tests-4%2F4%20Passed-brightgreen?style=for-the-badge&logo=openai" alt="LLM Tests" />
+  <img src="https://img.shields.io/badge/Engine%20Tests-64%20Passing-brightgreen?style=for-the-badge&logo=pytest" alt="Rule Tests" />
+  <img src="https://img.shields.io/badge/LLM%20Tests-need%20API%20key-yellow?style=for-the-badge&logo=openai" alt="LLM Tests" />
   <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License" />
   <img src="https://img.shields.io/badge/Python-3.10%20|%203.11%20|%203.12%20|%203.14-informational?style=for-the-badge&logo=python" alt="Python Versions" />
   <img src="https://img.shields.io/badge/Frontend-Vanilla%20HTML5%20%2F%203D%20CSS3-orange?style=for-the-badge&logo=html5" alt="3D Frontend" />
-  <img src="https://img.shields.io/badge/Offline-100%25%20Air--Gapped-success?style=for-the-badge" alt="Air-Gapped Capable" />
-  <img src="https://img.shields.io/badge/Hardware%20BoM-1%2C600%20PKR%20(Scrap)-blueviolet?style=for-the-badge" alt="Scrap Cost" />
+  <img src="https://img.shields.io/badge/Core%20features-work%20offline-success?style=for-the-badge" alt="Core features work offline" />
+  <img src="https://img.shields.io/badge/Hardware-see%20Bill%20of%20Provenance-blueviolet?style=for-the-badge" alt="Scrap Cost" />
 </p>
 
 ---
@@ -61,10 +61,10 @@ Most hackathon teams attempt to clone a generic schoolteacher, lawyer, or medica
 
 | Failure Mode | Generic Generative Chatbot | Ustaad-in-a-Box Stand-In |
 |---|---|---|
-| **Hallucination Risk** | Confidently invents dangerous DIY battery punctures or hair-dryer advice. | **Zero stochastic drift**. Verdicts are locked to formal YAML rules. |
+| **Hallucination Risk** | Confidently invents dangerous DIY battery punctures or hair-dryer advice. | **Verdicts come only from the rule engine (the LLM only rephrases text)**. Verdicts are locked to formal YAML rules. |
 | **Safety Criticality** | Softly suggests troubleshooting while a lithium pouch undergoes thermal runaway. | **Hard Safety Stop**. Immediately outputs `ESCALATE` and orders power disconnection. |
-| **Auditable Provenance** | Black box neural weights; impossible to trace why an answer was generated. | **100% Provenance**. Every response displays rule ID, tags, source tape counter, and why it fired. |
-| **Offline Operation** | Requires high-bandwidth multi-billion-parameter cloud APIs. | **100% Air-Gapped**. Runs on a 15-year-old salvaged Core 2 Duo laptop without internet. |
+| **Auditable Provenance** | Black box neural weights; impossible to trace why an answer was generated. | **Full rule provenance**. Every response displays rule ID, tags, source tape counter, and why it fired. |
+| **Offline Operation** | Requires high-bandwidth multi-billion-parameter cloud APIs. | **Works offline** (rule engine + local Whisper); cloud phrasing/transcription is optional. Target hardware: an old laptop; not benchmarked on a Core 2 Duo. |
 | **Ethical Scope** | Attempts to diagnose human illnesses or give financial speculation. | **Strict Out-of-Scope Shield**. Rejects non-repair questions (`OOS-001`). |
 
 ---
@@ -88,7 +88,7 @@ The system implements a rigid dual-engine separation of concerns:
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ 2. OPTIONAL GROQ CLOUD PHRASER (llm.py)                    │
-│    - Model: qwen/qwen3.8-27b (Latency < 350ms)              │
+│    - Model: qwen/qwen3-32b (latency not benchmarked)              │
 │    - Persona: Authentic Karachi Repair Artisan (Ustaad)     │
 │    - Dialect: Natural Roman Urdu & Colloquial English       │
 │    - STRICT GUARD: Cannot alter verdict or dilute hazards   │
@@ -155,7 +155,7 @@ flowchart TD
 
         subgraph Phrasing_Layer ["Dual-Engine Phraser (llm.py)"]
             Groq_Check{"Groq API Enabled?"}
-            Groq_Model["Groq Qwen 27B Phraser\n(Karachi Artisan Persona)"]
+            Groq_Model["Groq Qwen3 32B Phraser (optional)\n(Karachi Artisan Persona)"]
             Raw_Rule["Canonical Baseline Text\n(Pre-compiled Expert Guidance)"]
         end
 
@@ -205,29 +205,30 @@ flowchart TD
 
 The baseline diagnostic knowledge is encoded in [`rules.yaml`](rules.yaml) and organized across standard categories:
 
-| Rule ID | Severity | Verdict | Trigger Condition (`when`) | Category & Human Description |
+| Rule ID | Severity | Verdict | Trigger (`when`) | Description |
 |---|---|---|---|---|
-| `BAT-003` | `safety_stop` | **ESCALATE** | `[battery_swollen]` | **Swollen Battery**: Immediate fire/explosion hazard. Cease charging, isolate device. |
-| `BAT-004` | `safety_stop` | **ESCALATE** | `[battery_leaking]` | **Punctured / Leaking Battery**: Toxic chemical leak. Avoid skin contact, ventilate. |
-| `SMK-001` | `safety_stop` | **ESCALATE** | `[smoke_smell]` | **Smoke or Burning Smell**: Active electrical short circuit. Disconnect power instantly. |
-| `WAT-001` | `safety_stop` | **ESCALATE** | `[water_damage, device_on]` | **Liquid Immersion (Device ON)**: Electrolytic corrosion risk. Power down immediately. |
-| `WAT-003` | `safety_stop` | **ESCALATE** | `[water_damage, charging_fault]` | **Hair-Dryer / Wet Charging Trap**: Forced heat pushes moisture deeper into ICs. |
-| `CHG-002` | `safety_stop` | **ESCALATE** | `[overheating, charging_fault]` | **Thermal Runaway on Charger**: Charger/PMIC failure. Unplug from mains socket. |
-| `PWR-001` | `safety_stop` | **ESCALATE** | `[powerbank_tamper]` | **Power Bank Disassembly**: High-capacity pouch cells puncture easily. Never pry open. |
-| `PWR-002` | `safety_stop` | **ESCALATE** | `[powerbank_overheat]` | **Power Bank Overheating**: Unregulated charging current. Disconnect and quarantine. |
-| `WAT-002` | `caution` | **CAUTION** | `[water_damage]` | **Liquid Immersion (Device OFF)**: Keep off. Air dry; inspect board for corrosion. |
-| `CHG-001` | `caution` | **CAUTION** | `[charging_fault]` | **Not Charging**: Test cable/brick first; check lint in port with non-conductive pick. |
-| `BAT-001` | `caution` | **CAUTION** | `[battery_drain]` | **Rapid Battery Drain**: Check background apps; if sudden collapse, cell is degraded. |
-| `SCR-001` | `normal` | **SAFE** | `[screen_cracked, touch_working]` | **Cosmetic Screen Crack**: Digitizer intact. Apply screen protector, safe to use. |
-| `SCR-002` | `caution` | **CAUTION** | `[screen_cracked, touch_not_working]` | **Cracked Glass with Dead Digitizer**: Touch failure; display assembly replacement required. |
-| `SCR-003` | `caution` | **CAUTION** | `[screen_bleed]` | **Internal OLED Ink Bleed**: Matrix rupture spreading purple/black stains across display. |
-| `DEV-001` | `normal` | **SAFE** | `[device_slow]` | **Device Sluggishness / Hang**: Software/cache clutter. Free 15% internal storage. |
-| `DEV-002` | `caution` | **CAUTION** | `[overheating]` | **General Phone Overheating**: Standby heat indicates PMIC short. Power down and inspect. |
-| `LAP-001` | `caution` | **CAUTION** | `[laptop_thermal]` | **Laptop Thermal Throttling**: Dust clogging exhaust vents or dried thermal paste. |
-| `REP-001` | `normal` | **SAFE** | `[repair_vs_replace]` | **Economic Repair Assessment**: If repair >50% value of old phone, upgrade instead. |
-| `OOS-001` | `oos` | **ESCALATE** | `[out_of_scope_price]` | **Price Inquiry**: Hardware pricing requires physical board and part inspection. |
-| `OOS-002` | `oos` | **ESCALATE** | `[out_of_scope_unlock]` | **Passcode / Cloud Bypass**: Strictly out of scope; refer to original purchaser. |
-| `OOS-003` | `oos` | **ESCALATE** | `[out_of_scope_medical]`| **Radiation / Medical**: Electronic repair technicians do not give medical advice. |
+| `BAT-003` | `safety_stop` | **ESCALATE** | `['battery_swollen']` | Swollen battery |
+| `BAT-004` | `safety_stop` | **ESCALATE** | `['battery_leaking']` | Leaking or dented battery |
+| `SMK-001` | `safety_stop` | **ESCALATE** | `['smoke_smell']` | Smoke or burning smell |
+| `WAT-001` | `safety_stop` | **ESCALATE** | `['water_damage', 'device_on']` | Water damage — device currently on |
+| `WAT-002` | `caution` | **CAUTION** | `['water_damage']` | Water damage — device already off |
+| `WAT-003` | `safety_stop` | **ESCALATE** | `['water_damage', 'charging']` | Water damage — connected to charger |
+| `CHG-002` | `safety_stop` | **ESCALATE** | `['overheating', 'charging']` | Overheating while charging |
+| `PWR-001` | `safety_stop` | **ESCALATE** | `['power_bank', 'opening_device']` | Power bank fault or opening |
+| `PWR-002` | `safety_stop` | **ESCALATE** | `['power_bank', 'overheating']` | Power bank overheating / charging hazard |
+| `CHG-001` | `normal` | **CAUTION** | `['charging_fault']` | Device not charging |
+| `BAT-001` | `normal` | **CAUTION** | `['battery_drain']` | Fast battery drain |
+| `SCR-000` | `normal` | **CAUTION** | `['cracked_screen']` | Cracked screen — general inquiry |
+| `SCR-001` | `normal` | **SAFE** | `['cracked_screen', 'touch_working']` | Cracked screen — touch working |
+| `SCR-002` | `caution` | **CAUTION** | `['cracked_screen', 'touch_broken']` | Cracked screen — touch not working |
+| `SCR-003` | `caution` | **CAUTION** | `['screen_ink_bleed']` | Screen internal damage — purple ink / lines / bleeding |
+| `DEV-001` | `normal` | **CAUTION** | `['slow_device']` | Slow or hanging device |
+| `DEV-002` | `caution` | **CAUTION** | `['overheating']` | Phone overheating — general |
+| `LAP-001` | `caution` | **CAUTION** | `['laptop', 'overheating']` | Laptop overheating |
+| `REP-001` | `normal` | **CAUTION** | `['repair_vs_replace']` | Repair vs replace |
+| `SHK-001` | `safety_stop` | **ESCALATE** | `['electric_shock']` | Electric shock from device or charger |
+
+*Plus out-of-scope (price, unlock, medical/legal, other appliances) and `OUT_OF_RULES` fallbacks, which always escalate. Every rule is an unverified draft; see the Honesty Note.*
 
 ---
 
@@ -268,7 +269,7 @@ sequenceDiagram
     User->>UI: Release Push-to-Talk
     UI->>Audio: POST /api/transcribe
     
-    alt Groq Online (<500ms)
+    alt Groq Online (typically fast; not benchmarked)
         Audio->>Groq: Transcribe WebM Blob
         Groq-->>Audio: Return Transcript + High Confidence
     else Groq Offline / Timeout
@@ -289,40 +290,14 @@ sequenceDiagram
 
 - **Push-to-Talk (PTT)**: Captures audio *only* when held down, eliminating ambient hall noise between queries.
 - **Voice Activity Detection (VAD)**: Strips leading and trailing dead air before passing to speech models.
-- **Multilingual Recognition**: Automatically identifies Urdu script, Roman Urdu phonetics, and English phrases.
+- **Multilingual Recognition**: Roman Urdu and English are covered by the rules; Urdu script has only a handful of hazard phrases (swollen, smoke, water, shock) and otherwise falls back to `OUT_OF_RULES`.
 - **Confirm Step Fallback**: If confidence drops below `0.45`, the system renders a confirmation prompt (*"Kya aap ne yeh kaha: '[Transcript]'?"*) allowing the user to verify before execution.
 
 ---
 
-## 🔩 Physical Hardware Salvage & E-Waste Build
+## 🔩 Physical Hardware
 
-In true alignment with Karachi's informal scrap markets, the physical exhibition stand is constructed from recycled components:
-
-```
-+-------------------------------------------------------------------+
-|               USTAAD-IN-A-BOX SALVAGE STAND                       |
-|                                                                   |
-|   +--------------------------+     +--------------------------+   |
-|   | 3D UI Display Panel      |     | 3D Tactile PTT Disc      |   |
-|   | (Netbook LCD Screen)     |     | (Salvaged Hands-Free Mic)|   |
-|   +--------------------------+     +--------------------------+   |
-|                                                                   |
-|   +-----------------------------------------------------------+   |
-|   | HEAVY STEEL QUARANTINE CHAMBER (Ammunition Canister)      |   |
-|   | - Vermiculite / Sand thermal absorption bed               |   |
-|   | - Pressure-relief venting with ceramic wool exhaust       |   |
-|   | - Safe isolation chamber for swollen batteries            |   |
-|   +-----------------------------------------------------------+   |
-|                                                                   |
-|   +-----------------------------------------------------------+   |
-|   | Salvaged Dell Inspiron Motherboard (Intel Core 2 Duo)     |   |
-|   | Total Power Draw: < 28 Watts                              |   |
-|   +-----------------------------------------------------------+   |
-+-------------------------------------------------------------------+
-```
-
-- **Total Hardware Cost**: **1,600 PKR (~$5.75 USD)**.
-- **Full Specifications**: See [`docs/HARDWARE_SALVAGE_SPEC.md`](docs/HARDWARE_SALVAGE_SPEC.md) for the complete hardware Bill of Materials.
+The physical stand is built from salvaged parts. The authoritative, team-confirmed list (what each part was, where it came from, where it goes after) is in [`docs/BILL_OF_PROVENANCE.md`](docs/BILL_OF_PROVENANCE.md); build notes are in [`docs/HARDWARE_SALVAGE_SPEC.md`](docs/HARDWARE_SALVAGE_SPEC.md). This README deliberately does not repeat part lists, so the documents cannot disagree.
 
 ---
 
@@ -332,12 +307,12 @@ In true alignment with Karachi's informal scrap markets, the physical exhibition
 Ustaad-In-A-Box/
 ├── engine.py                   # Core deterministic rule engine & tag extractor
 ├── llm.py                      # Groq LLM natural phrasing & cloud Whisper layer
-├── rules.yaml                  # 16+ authored rules with provenance sources
+├── rules.yaml                  # 20 authored DRAFT rules with provenance sources
 ├── synonyms.yaml               # Multi-lingual dictionary (Urdu / Roman Urdu / English)
 ├── logger.py                   # Append-only interaction logger & CSV review generator
 ├── main.py                     # FastAPI application server & API routes
-├── test_engine.py              # Deterministic rule test suite (56/56 passing)
-├── test_llm.py                 # External Groq LLM integration test suite (4/4 passing)
+├── test_engine.py              # Deterministic rule test suite (64 checks)
+├── test_llm.py                 # External Groq LLM integration test suite (offline guard test + 3 live tests that need a Groq key)
 ├── package_submission.py       # Automated submission packaging script
 ├── requirements.txt            # Python dependencies (free & open source)
 ├── run.bat                     # Windows 1-click launch batch script
@@ -361,7 +336,6 @@ Ustaad-In-A-Box/
 │
 ├── interactions.jsonl          # Immutable runtime audit log of all interactions
 ├── ustaad_review.csv           # RFC 4180 export worksheet for human-in-the-loop review
-└── ustaad_in_a_box_submission.zip # Standalone distributable competition archive
 ```
 
 ---
@@ -370,8 +344,8 @@ Ustaad-In-A-Box/
 
 ### System Requirements
 - **OS**: Windows 10/11, Debian/Ubuntu Linux, Raspberry Pi OS, or macOS.
-- **Python**: Python 3.10 to 3.14 (Fully verified on Python 3.14.3).
-- **Network**: Internet connection required *only* during initial `pip install` or if using Groq Cloud API. **100% functional offline**.
+- **Python**: Python 3.10 to 3.14 (Python 3.10+; test suite run on the versions listed in the Honesty Note).
+- **Network**: Internet connection required *only* during initial `pip install` or if using Groq Cloud API. **Core features work offline**; Groq phrasing/transcription are optional extras that need internet.
 
 ### 1-Click Launch (Windows)
 Double-click [`run.bat`](run.bat) in the project directory. The batch script verifies dependencies, runs unit tests, and launches the server.
@@ -432,24 +406,11 @@ The local FastAPI backend serves the frontend and external kiosks over clean RES
 Quality assurance is maintained through continuous regression testing:
 
 ```
-============================================================
-  Ustaad-in-a-Box — Test Harness Summary
-============================================================
-  ✓ test_engine.py: 56/56 passing (100% Rule Engine Coverage)
-    - Safety-stop priority assertions (swollen battery, smoke, fire)
-    - Negation clauses & boundary protections
-    - Compound symptom rules (water + device on, heat + charging)
-    - Out-of-scope rejections (medical, legal, pricing, bypasses)
-  
-  ✓ test_llm.py:    4/4 passing (100% LLM Phraser Coverage)
-    - API health check & fallback handling
-    - Offline fallback to canonical rule text in 0ms
-    - Safety verdict preservation under live Qwen 27B inference
-    - Non-dilution of hazard warnings
-============================================================
-  ALL 60 TESTS PASSING
-============================================================
+test_engine.py : 64 checks, all passing (run: python test_engine.py)
+test_llm.py    : 1 offline guard test always runs; 3 live tests are SKIPPED
+                 unless GROQ_API_KEY is set and the network is reachable.
 ```
+*Passing tests show the listed cases behave as written. They do not show the rules are correct: no technician has reviewed them yet.*
 
 ---
 

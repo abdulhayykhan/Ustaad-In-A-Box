@@ -24,14 +24,14 @@ If an incoming pull request introduces non-deterministic model inference into th
 
 1. **Safety First**: Lithium-ion battery swelling, thermal runaway, internal electrical shorts, and water immersion with high-voltage charging are physical fire and explosion hazards. We never downplay risk to sound optimistic.
 2. **Honesty Over Perfection**: We do not fabricate benchmark scores or fake interview timestamps. Unverified rules must be labeled `DRAFT RULE — UNVERIFIED BASELINE`. Real bugs must be documented openly in [`docs/HONESTY_NOTE.md`](docs/HONESTY_NOTE.md).
-3. **Salvage & Accessibility**: The front-end must remain pure vanilla HTML5, CSS3, and minimal vanilla JavaScript. No React, no Vite build steps, no heavy Node.js runtimes, and no external CDN dependencies that prevent 100% offline operation on salvaged Core 2 Duo laptops.
+3. **Salvage & Accessibility**: The front-end must remain pure vanilla HTML5, CSS3, and minimal vanilla JavaScript. No React, no Vite build steps, no heavy Node.js runtimes, and no external CDN dependencies that prevent works offline (core features) operation on salvaged Core 2 Duo laptops.
 
 ---
 
 ## 🚀 How to Set Up Your Development Environment
 
 ### 1. Prerequisites
-- Python 3.10+ (tested through Python 3.14).
+- Python 3.10+.
 - Git.
 - Optional: A free Groq Cloud API key from [console.groq.com](https://console.groq.com) for cloud phrasing and cloud Whisper STT.
 

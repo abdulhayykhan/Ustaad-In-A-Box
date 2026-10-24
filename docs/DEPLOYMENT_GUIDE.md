@@ -3,7 +3,7 @@
 This guide provides exhaustive, battle-tested deployment instructions for running **Ustaad-in-a-Box** in production, exhibition booths, or repair shop counters.
 
 The system is designed to run reliably on two fundamentally different hardware tiers:
-1. **Tier 1: Salvaged Scrap Hardware (Air-Gapped / Offline)**: A discarded 2011–2014 laptop (Intel Core 2 Duo or 2nd-gen Core i3, 4GB RAM, no GPU, no internet connection).
+1. **Tier 1: Salvaged Scrap Hardware (Offline-capable)**: A discarded 2011–2014 laptop (Intel Core 2 Duo or 2nd-gen Core i3, 4GB RAM, no GPU, no internet connection).
 2. **Tier 2: Cloud Hybrid Station**: A modern workstation, Raspberry Pi 5, or laptop connected to the Groq Cloud API for conversational LLM phrasing and cloud Whisper STT.
 
 ---
@@ -18,13 +18,13 @@ The system is designed to run reliably on two fundamentally different hardware t
 | **Microphone** | Salvaged 3.5mm TRRS condenser mic or USB webcam mic | Directional USB boundary microphone |
 | **Audio Output** | Internal scrap laptop speaker or 3.5mm passive speaker | External amplified desk speaker |
 | **Display** | 1024×768 LCD panel (built-in or salvaged external monitor) | 1080p touch monitor or tablet browser |
-| **Network** | **Zero / Completely Air-Gapped** | 2 Mbps Wi-Fi or Ethernet |
+| **Network** | **None needed for core features (cloud features optional)** | 2 Mbps Wi-Fi or Ethernet |
 
 ---
 
 ## ⚡ Deployment Modes
 
-### Mode A: 100% Offline Air-Gapped Setup
+### Mode A: Offline Setup (no Groq key)
 Ideal for remote disaster recovery camps, e-waste salvage yards, or competition tracks requiring zero external API dependencies.
 
 1. **Rule Engine**: Runs deterministic Python code directly in-memory (< 40 MB RAM footprint).
@@ -39,7 +39,7 @@ Ideal for remote disaster recovery camps, e-waste salvage yards, or competition 
 Ideal for live public interactive demos where maximum conversational charm, authentic Karachi vernacular phrasing, and instantaneous voice transcription are desired.
 
 1. **Rule Engine**: Runs locally on device with absolute decision authority.
-2. **LLM Phraser**: Cloud Groq API (`qwen/qwen3.8-27b`) rephrases the verdict in artisan Roman Urdu / English (< 350 ms).
+2. **LLM Phraser**: Cloud Groq API (`qwen/qwen3-32b`) rephrases the verdict in artisan Roman Urdu / English (< 350 ms).
 3. **Cloud Whisper**: Cloud Groq Whisper (`whisper-large-v3-turbo`) transcribes speech in < 450 ms.
 4. **Resilience**: If the internet cable is unplugged mid-demo, the server automatically drops back to the local deterministic rule engine in 0 ms.
 
@@ -120,9 +120,9 @@ RULES_FILE=rules.yaml
 SYNONYMS_FILE=synonyms.yaml
 LOGS_FILE=interactions.jsonl
 
-# Groq Cloud API Configuration (Leave blank for 100% offline mode)
+# Groq Cloud API Configuration (Leave blank for works offline (core features) mode)
 GROQ_API_KEY=gsk_your_groq_api_key_here
-GROQ_MODEL=qwen/qwen3.8-27b
+GROQ_MODEL=qwen/qwen3-32b
 GROQ_WHISPER_MODEL=whisper-large-v3-turbo
 
 # Local STT Settings (Fallback / Offline)
@@ -146,7 +146,7 @@ Output will confirm:
 ============================================================
   Server running at: http://0.0.0.0:8000
   Rules loaded:      16 rules from rules.yaml
-  Groq LLM Phraser:  ENABLED (model: qwen/qwen3.8-27b)
+  Groq LLM Phraser:  ENABLED (model: qwen/qwen3-32b)
   Whisper STT:       DUAL (Cloud Groq Whisper + Local fallback)
 ============================================================
 ```

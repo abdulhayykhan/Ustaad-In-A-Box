@@ -65,7 +65,7 @@ Accept: application/json
   "matched_tags": ["array of strings (Normalized symptom tags extracted)"],
   "is_safety_stop": "boolean (True if physical danger requires immediate power down)",
   "all_matched_rules": ["array of strings (All rule IDs matching query before priority resolution)"],
-  "phrased_by": "string | null (e.g. 'groq:qwen/qwen3.8-27b' or null if canonical)",
+  "phrased_by": "string | null (e.g. 'groq:qwen/qwen3-32b' or null if canonical)",
   "canonical_rule_answer": "string | null (Original deterministic rule text if rephrased)",
   "log_id": "string (Unique 8-character hexadecimal tracking ID)"
 }
@@ -91,7 +91,7 @@ curl -X POST http://localhost:8000/api/ask \
   "matched_tags": ["battery_swollen"],
   "is_safety_stop": true,
   "all_matched_rules": ["BAT-003"],
-  "phrased_by": "groq:qwen/qwen3.8-27b",
+  "phrased_by": "groq:qwen/qwen3-32b",
   "canonical_rule_answer": "Yaar, swollen battery serious cheez hai. Abhi charging band karo aur phone use karna bhi chhoro. Isko mat dabao, mat kholne ki koshish karo. Mujhse milne aao — swollen battery leak ya catch fire kar sakti hai.",
   "log_id": "936033f3"
 }
@@ -172,7 +172,7 @@ Returns real-time status, reachability, and model parameters for the external Gr
 {
   "available": true,
   "provider": "groq",
-  "chat_model": "qwen/qwen3.8-27b",
+  "chat_model": "qwen/qwen3-32b",
   "whisper_model": "whisper-large-v3-turbo"
 }
 ```

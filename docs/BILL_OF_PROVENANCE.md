@@ -1,56 +1,41 @@
-# 📋 Rocketathon 2026 · Deliverable 02: Bill of Provenance
+# Rocketathon 2026 · Deliverable 02: Bill of Provenance
 
-**Project:** Ustaad-in-a-Box  
-**Track:** Track 1: Stand-In  
-**Team:** Dawood University of Engineering & Technology (DUET)  
-**Date:** 29 September 2026  
-**Venue:** Expo Centre Karachi  
+**Project:** Ustaad-in-a-Box · **Track:** 1 (Stand-In) · **Team:** DUET
 
----
+This bill lists only what the team can state with confidence. Where the origin or earlier life of a part was not recorded, it says "not recorded" rather than guessing. An incomplete but true bill is better than a detailed one we cannot back up.
 
-## 1. Declarative Statement on the Scrap Rule
+## 1. Scrap rule statement
 
-> **"Everything you build must come from scrap, e-waste, donated or recycled parts. You may not buy parts or pay for services."**
+- **Money spent on parts:** not recorded. No purchase receipts exist in this repository, and this document does not claim that nothing was spent.
+- **Paid services:** none known. The optional Groq cloud API (chat and transcription) is a third-party service used only if a key is configured. The system runs without it, using the rule engine's own text and local faster-whisper.
 
-We hereby certify that **PKR 0.00** was spent on hardware components, commercial software licenses, cloud compute, or paid API subscriptions for the creation and operation of **Ustaad-in-a-Box**. Every physical item was salvaged from home surplus, family e-waste drawers, or local mobile repair workshops. Every software dependency is licensed under permissive, royalty-free Open Source licenses.
+## 2. Hardware
 
----
-
-## 2. Hardware Bill of Provenance
-
-| Component & Role | Previous Life / What It Was | Origin / Where It Came From | Next Life / Where It Goes After | Inspection & Safety Status |
+| Part | Used for | What it was before | Where it came from | Where it goes after |
 |---|---|---|---|---|
-| **Host Compute & Engine** (Laptop Brain) | 2017 Lenovo IdeaPad 320 with cracked chassis and dead internal battery (operates solely on AC brick). | Team member's family surplus (discarded after hinge damage). | Retained by team for educational robotics and open-source lab projects. | Internal battery safely disconnected. Powered via original inspected DC adapter. No swollen cells. |
-| **User Interface & Face Display** (Old Android Phone) | 2018 Samsung Galaxy J6 with spiderweb cracked outer glass, functional AMOLED display and capacitive touch. | Donated by neighborhood repair shop (Saddar mobile market scrap bin). | Returned to repair shop scrap bin or recycled via Alkhidmat e-waste drive. | Battery physically inspected by mentor: 0% swelling, 0% denting, voltage nominal (3.8V). |
-| **Voice Output / Speaker** (Acoustic presence) | 3W audio transducer removed from a broken Bluetooth portable speaker with a dead micro-USB port. | Common Scrapyard / Team electronic scrap box. | Returned to common scrapyard for future hackathons. | Stripped of faulty battery; powered directly from salvaged laptop USB 5V rail. |
-| **Microphone / Acoustic Input** | Integrated stereo microphone array inside Lenovo laptop lid. | Native to salvaged laptop. | Stays with laptop chassis. | Passed bench audio test. No hazardous voltages. |
-| **Chassis Stand / Mounting** | Discarded cardboard packing crate, scrap wooden strip, and rubber bands. | DUET workshop recycling bin. | Recycled in paper waste stream. | Non-conductive, clean, no sharp metal edges. |
-| **Cabling & Power Delivery** | Used USB-A to Micro-USB cables and laptop DC barrel adapter. | Personal tool kit (pre-owned). | Returned to team personal tools. | Insulation inspected with multimeter; zero frayed wiring or exposed conductors. |
+| Windows computer used to develop and run the software | Runs the server, rule engine and web interface; displays the interface in a browser | Not recorded | Not recorded | Not recorded |
+| The computer's own screen, speaker and microphone (as far as the team can confirm) | Show the interface, speak answers, take push-to-talk input | Part of the computer above | Same as above | Same as above |
 
----
+No separate salvaged display, speaker, microphone, stand or battery-containment box is claimed. If any were used, they are not documented here, and nothing in this bill should be read as saying they were.
 
-## 3. Software Bill of Provenance & Licenses
+## 3. Software and licences
 
-All software used in this project is 100% free, local, open-source, and does not require active cloud connections or commercial API keys.
+`requirements.txt` does not pin versions, so exact versions depend on the machine that installed them.
 
-| Software / Package | Version | Purpose in System | License | Upstream Origin |
-|---|---|---|---|---|
-| **Python** | `3.14.3` | Core application runtime & rule engine execution | PSF License | [python.org](https://www.python.org/) |
-| **FastAPI** | `0.135.1` | Asynchronous local REST API and HTTP server | MIT License | [fastapi.tiangolo.com](https://fastapi.tiangolo.com/) |
-| **Uvicorn** | `0.41.0` | High-performance ASGI web server | BSD 3-Clause | [uvicorn.org](https://www.uvicorn.org/) |
-| **PyYAML** | `6.0.3` | Parsing human-readable rule and synonym definitions | MIT License | [pyyaml.org](https://pyyaml.org/) |
-| **Pydantic** | `2.12.5` | Data validation, type safety, and schema models | MIT License | [pydantic.dev](https://docs.pydantic.dev/) |
-| **faster-whisper** (optional local STT) | `latest` | CPU-quantized int8 multilingual speech-to-text | MIT License / Apache 2.0 | Systran / OpenAI Whisper weights |
-| **Web Speech API** | Native Browser | Zero-latency Urdu/Hindi/English local voice synthesis | W3C Standard | Embedded in Chromium / WebKit engine |
-| **Vanilla HTML5 / CSS3 / ES6** | Handcrafted | Push-to-talk interface, waveform canvas, why-panel | MIT (Custom) | Authored locally by team |
+| Package | Purpose | Licence |
+|---|---|---|
+| Python | Runtime | PSF |
+| FastAPI | Local web API | MIT |
+| Uvicorn | ASGI server | BSD-3-Clause |
+| PyYAML | Reads rules and synonyms | MIT |
+| python-multipart | Audio upload parsing | Apache-2.0 |
+| requests | Cloud transcription call (optional path) | Apache-2.0 |
+| faster-whisper (+ Whisper model weights) | Local offline speech-to-text | MIT (weights: MIT) |
+| Browser Web Speech API | Text-to-speech in the browser | Browser feature |
+| Own HTML/CSS/JS | Interface | MIT (this repo) |
 
----
+**Optional cloud services (not scrap, not offline):** Groq chat API and Groq Whisper. Disabled when `GROQ_API_KEY` is empty.
 
-## 4. Disassembly and Circular Lifecycle Plan
+## 4. After the event
 
-In accordance with Rocketathon rules on circularity:
-1. **Zero-Adhesive Construction:** All components are affixed using non-destructive mechanical friction, rubber bands, or reusable cable ties. No hot glue or epoxies were applied to electronic boards.
-2. **Immediate Post-Event Reclamation:**
-   - The salvaged Samsung smartphone will be factory wiped, dismounted, and handed back to the donating repair workshop for component harvesting (PMIC, camera modules).
-   - Cardboard mounting brackets will be sorted into DUET paper recycling bins.
-   - The host laptop will return to serving student terminal sessions in the university hardware lab.
+No return or recycling plan was recorded for the computer. It is expected to stay with whoever owns it. Nothing was built that needs disposal.
